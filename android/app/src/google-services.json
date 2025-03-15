@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "761824383058",
+    "project_id": "school-bus-tracker-27fc2",
+    "storage_bucket": "school-bus-tracker-27fc2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761824383058:android:ac8efba973ed1b9d970f8b",
+        "android_client_info": {
+          "package_name": "com.example.bus_tracking_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmZd-jIBnxlky8hEX0oVWYF0loC8u2glI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
