@@ -1,3 +1,4 @@
+import 'package:bus_tracking_app/pages/admin/home_page.dart';
 import 'package:bus_tracking_app/pages/drivers/home_page.dart';
 import 'package:bus_tracking_app/pages/parents/home_page.dart';
 import 'package:flutter/material.dart';
@@ -152,6 +153,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => DriverHomeScreen()),
+                  );
+                }
+                if(_selectedRole=='Admin'){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AdminHomeScreen()),
                   );
                 }
               },

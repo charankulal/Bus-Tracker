@@ -119,7 +119,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       onPressed: () {},
-                      child: Text('SOS', style: TextStyle(color: Colors.white)),
+                      child: Text('Call Driver', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
