@@ -8,10 +8,31 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   String _selectedRole = 'Parent';
+  bool _isKeyboardOpen = false;
   TextEditingController _childNameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    setState(() {
+      _isKeyboardOpen = bottomInset > 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: 50),
+            if(!_isKeyboardOpen) ...[
             CircleAvatar(
               radius: 100,
               foregroundImage: AssetImage('assets/logo.jpg'),
@@ -53,8 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(width: 5),
                 Text('Ujire', style: TextStyle(color: Colors.white)),
               ],
+
             ),
             SizedBox(height: 40),
+            ],
             Text('Login As', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Container(
@@ -63,7 +87,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: DropdownButtonHideUnderline(
+              child: _isKeyboardOpen ?
+              Text(_selectedRole,
+              style: TextStyle(
+                fontSize: 14
+              ),
+              ):
+              DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: _selectedRole,
                   items: ['Parent', 'Driver', 'Admin'].map((role) {
