@@ -1,10 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class BusDatabaseMethods{
-  Future addBus(Map<String, dynamic> busInfo) async {
-    return await FirebaseFirestore.instance
-        .collection("bus")
-        .doc()
-        .set(busInfo);
+class BusDatabaseMethods {
+  final CollectionReference busCollection =
+  FirebaseFirestore.instance.collection("bus");
+
+  Future<void> addBus(Map<String, dynamic> busInfo) async {
+    DocumentReference docRef = busCollection.doc();
+    String busId = docRef.id;
+
+    busInfo['busId'] = busId;
+
+    await docRef.set(busInfo);
+  }
+
+  Future<Stream<QuerySnapshot>> getAllBuses() async {
+    return busCollection.snapshots();
+  }
+
+  Future updateBus(String id, Map<String, dynamic> updateInfo) async {
+    return await busCollection.doc(id).update(updateInfo);
+  }
+
+  Future<void> deleteBus(String busId) async {
+    await busCollection.doc(busId).delete();
   }
 }

@@ -10,7 +10,7 @@ class _AddBusPageState extends State<AddBusPage> {
   final TextEditingController _busNoController = TextEditingController();
 
   void _saveBus() async {
-    RegExp busNumberRegex = RegExp(r'^[A-Za-z]{2} \d{2} [A-Za-z]{0,2} \d{4}$');
+    RegExp busNumberRegex = RegExp(r'^[A-Za-z]{2} \d{2}[ ]{0,1}[A-Za-z]{0,2} \d{4}$');
 
     if (_busNoController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +85,7 @@ class _AddBusPageState extends State<AddBusPage> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             TextField(
+              textCapitalization: TextCapitalization.characters,
               controller: _busNoController,
               decoration: InputDecoration(
                 hintText: "Enter Bus No",
