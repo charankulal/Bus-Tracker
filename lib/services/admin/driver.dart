@@ -12,7 +12,16 @@ class DriverDatabaseServices {
 
     await docRef.set(driverInfo);
   }
+
   Future<Stream<QuerySnapshot>> getAllDrivers() async {
     return driverCollection.snapshots();
+  }
+
+  Future updateDriver(String id, Map<String, dynamic> updateInfo) async {
+    return await driverCollection.doc(id).update(updateInfo);
+  }
+
+  Future deleteDriver(String driverId) async {
+    return await driverCollection.doc(driverId).delete();
   }
 }

@@ -21,7 +21,7 @@ class BusDatabaseMethods {
     return await busCollection.doc(id).update(updateInfo);
   }
 
-  Future<void> deleteBus(String busId) async {
-    await busCollection.doc(busId).delete();
+  Future deleteBus(String busId) async {
+    return await busCollection.doc(busId).delete();
   }
 }
