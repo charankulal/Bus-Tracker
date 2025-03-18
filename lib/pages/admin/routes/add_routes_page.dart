@@ -37,72 +37,74 @@ class _AddRoutePageState extends State<AddRoutePage> {
         title: Text("Add Route"),
         backgroundColor: Colors.brown.shade700,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _routeNameController,
-              decoration: InputDecoration(labelText: "Route Name", border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 12),
-            TextField(
-              controller: _startLocationController,
-              decoration: InputDecoration(labelText: "Start Location", border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 12),
-            TextField(
-              controller: _endLocationController,
-              decoration: InputDecoration(labelText: "End Location", border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: _selectedBus,
-              items: _busNumbers.map((bus) {
-                return DropdownMenuItem(value: bus, child: Text(bus));
-              }).toList(),
-              onChanged: (value) => setState(() => _selectedBus = value),
-              decoration: InputDecoration(labelText: "Select Bus", border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: _selectedDriver,
-              items: _drivers.map((driver) {
-                return DropdownMenuItem(value: driver, child: Text(driver));
-              }).toList(),
-              onChanged: (value) => setState(() => _selectedDriver = value),
-              decoration: InputDecoration(labelText: "Select Driver", border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _routeNameController,
+                decoration: InputDecoration(labelText: "Route Name", border: OutlineInputBorder()),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _startLocationController,
+                decoration: InputDecoration(labelText: "Start Location", border: OutlineInputBorder()),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: _endLocationController,
+                decoration: InputDecoration(labelText: "End Location", border: OutlineInputBorder()),
+              ),
+              SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: _selectedBus,
+                items: _busNumbers.map((bus) {
+                  return DropdownMenuItem(value: bus, child: Text(bus));
+                }).toList(),
+                onChanged: (value) => setState(() => _selectedBus = value),
+                decoration: InputDecoration(labelText: "Select Bus", border: OutlineInputBorder()),
+              ),
+              SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: _selectedDriver,
+                items: _drivers.map((driver) {
+                  return DropdownMenuItem(value: driver, child: Text(driver));
+                }).toList(),
+                onChanged: (value) => setState(() => _selectedDriver = value),
+                decoration: InputDecoration(labelText: "Select Driver", border: OutlineInputBorder()),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: EdgeInsets.symmetric(vertical: 7, horizontal: 25),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      // Save Student Logic Here
+                    },
+                    child: Text("Save", style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
-                  onPressed: () {
-                    // Save Student Logic Here
-                  },
-                  child: Text("Save", style: TextStyle(color: Colors.white, fontSize: 16)),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.symmetric(vertical: 7, horizontal: 25),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 16)),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
