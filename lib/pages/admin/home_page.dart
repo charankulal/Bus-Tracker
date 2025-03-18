@@ -18,7 +18,7 @@ class AdminHomeScreen extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.brown.shade700, Colors.brown.shade300],
+                colors: [Colors.yellow.shade700, Colors.yellow.shade300],
               ),
             ),
             child: Column(
@@ -33,7 +33,7 @@ class AdminHomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
 
@@ -42,17 +42,17 @@ class AdminHomeScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, color: Colors.white),
+                    Icon(Icons.calendar_today, color: Colors.black),
                     SizedBox(width: 5),
-                    Text('05/10', style: TextStyle(color: Colors.white)),
+                    Text('05/10', style: TextStyle(color: Colors.black)),
                     SizedBox(width: 10),
-                    Icon(Icons.cloud, color: Colors.white),
+                    Icon(Icons.cloud, color: Colors.black),
                     SizedBox(width: 5),
-                    Text('26°C', style: TextStyle(color: Colors.white)),
+                    Text('26°C', style: TextStyle(color: Colors.black)),
                     SizedBox(width: 10),
-                    Icon(Icons.location_on, color: Colors.white),
+                    Icon(Icons.location_on, color: Colors.black),
                     SizedBox(width: 5),
-                    Text('Ujire', style: TextStyle(color: Colors.white)),
+                    Text('Ujire', style: TextStyle(color: Colors.black)),
                   ],
                 ),
               ],
@@ -68,10 +68,10 @@ class AdminHomeScreen extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               children: [
-                _buildAdminOption(context, 'Students',17, Icons.school, Colors.blue),
-                _buildAdminOption(context, 'Routes',17, Icons.map, Colors.green),
-                _buildAdminOption(context, 'Drivers',17, Icons.directions_bus, Colors.orange),
-                _buildAdminOption(context, 'Buses',17, Icons.directions_transit, Colors.red),
+                _buildAdminOption(context, 'Students',17, Icons.school, Colors.blue.shade300),
+                _buildAdminOption(context, 'Routes',17, Icons.map, Colors.green.shade300),
+                _buildAdminOption(context, 'Drivers',17, Icons.directions_bus, Colors.orange.shade300),
+                _buildAdminOption(context, 'Buses',17, Icons.directions_transit, Colors.red.shade300),
               ],
             ),
           ),
@@ -133,11 +133,11 @@ class AdminHomeScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 50, color: Colors.white),
+          Icon(icon, size: 50, color: Colors.black),
           SizedBox(height: 10),
-          Text(title, style: TextStyle(fontSize: 18, color: Colors.white)),
+          Text(title, style: TextStyle(fontSize: 18, color: Colors.black)),
           SizedBox(height: 10),
-          Text("Total "+title+" "+total.toString(), style: TextStyle(fontSize: 10, color: Colors.white)),
+          Text("Total "+title+" "+total.toString(), style: TextStyle(fontSize: 10, color: Colors.black)),
         ],
       ),
     );

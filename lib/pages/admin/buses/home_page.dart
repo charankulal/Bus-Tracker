@@ -40,7 +40,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Admin - Bus Management"),
-        backgroundColor: Colors.brown.shade700,
+        backgroundColor: Colors.yellow.shade700,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -72,6 +72,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                       return Card(
                         margin: EdgeInsets.symmetric(vertical: 8.0),
                         elevation: 4,
+                        color: Colors.yellow.shade100,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

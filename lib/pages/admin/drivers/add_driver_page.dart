@@ -55,7 +55,7 @@ class _AddDriverPageState extends State<AddDriverPage> {
   Widget build(BuildContext context) {
     var warning_text ='The Mapping of Driver to the Specific Routes and Bus can be done in Route Management Section';
     return Scaffold(
-      appBar: AppBar(title: Text("Add Driver"), backgroundColor: Colors.brown.shade700),
+      appBar: AppBar(title: Text("Add Driver"), backgroundColor: Colors.yellow.shade700),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(

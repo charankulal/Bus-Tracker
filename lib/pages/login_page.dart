@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.grey, Colors.transparent],
+            colors: [Colors.yellow.shade50, Colors.yellowAccent.shade700],
           ),
         ),
         child: Column(
@@ -58,23 +58,23 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
             SizedBox(height: 10),
             Text(
               'SmartBus',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             Text(
               'Bus Tracking Application',
-              style: TextStyle(fontSize: 14, color: Colors.white),
+              style: TextStyle(fontSize: 14, color: Colors.black),
             ),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.calendar_today, color: Colors.white),
+                Icon(Icons.calendar_today, color: Colors.black),
                 SizedBox(width: 5),
-                Text('05/10', style: TextStyle(color: Colors.white)),
+                Text('05/10', style: TextStyle(color: Colors.black)),
                 SizedBox(width: 10),
-                Icon(Icons.location_on, color: Colors.white),
+                Icon(Icons.location_on, color: Colors.black),
                 SizedBox(width: 5),
-                Text('Ujire', style: TextStyle(color: Colors.white)),
+                Text('Ujire', style: TextStyle(color: Colors.black)),
               ],
 
             ),
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: _isKeyboardOpen ?
@@ -170,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
             SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey,
+                backgroundColor: Colors.white,
               ),
               onPressed: () async {
 
@@ -197,45 +197,45 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                     return;
                   }
 
-                  String enteredPassword = _passwordController.text.trim();
-                  List<String> adminPasswords = await AdminLoginServices().getAllAdminPasswords();
+                    String enteredPassword = _passwordController.text.trim();
+                    List<String> adminPasswords = await AdminLoginServices().getAllAdminPasswords();
 
-                  if (adminPasswords.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Error retrieving admin credentials!"),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                    return;
+                    if (adminPasswords.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Error retrieving admin credentials!"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      return;
+                    }
+
+                    if (adminPasswords.contains(enteredPassword)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Login Successful"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => AdminHomeScreen()),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Incorrect Password!"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   }
-
-                  if (adminPasswords.contains(enteredPassword)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Login Successful"),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => AdminHomeScreen()),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Incorrect Password!"),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                }
 
               },
               child: Text(
                 "Submit",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black),
               ),
             ),
           ],

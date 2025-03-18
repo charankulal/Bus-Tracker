@@ -11,6 +11,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.yellow.shade400,
       body: Column(
         children: [
           Container(
@@ -26,7 +27,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                          color: Colors.black),
                     ),
                     CircleAvatar(
                       radius: 30,
@@ -37,7 +38,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 SizedBox(height: 5),
                 Text(
                   'Bus number : XXX2457',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -56,13 +57,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 SizedBox(height: 10),
                 Row(
                   children: [
-                    Icon(Icons.calendar_today, color: Colors.white),
+                    Icon(Icons.calendar_today, color: Colors.black),
                     SizedBox(width: 5),
-                    Text('05/10', style: TextStyle(color: Colors.white)),
+                    Text('05/10', style: TextStyle(color: Colors.black)),
                     SizedBox(width: 10),
-                    Icon(Icons.location_on, color: Colors.white),
+                    Icon(Icons.location_on, color: Colors.black),
                     SizedBox(width: 5),
-                    Text('Ujire', style: TextStyle(color: Colors.white)),
+                    Text('Ujire', style: TextStyle(color: Colors.black)),
                   ],
                 ),
                 SizedBox(height: 10),
@@ -73,19 +74,19 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightGreen,
+                          backgroundColor: Colors.lightGreen.shade400,
                           padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                         ),
-                        child: Text('Start Trip', style: TextStyle(color: Colors.white)),
+                        child: Text('Start Trip', style: TextStyle(color: Colors.black)),
                       ),
                       SizedBox( width: MediaQuery.of(context).size.width * 0.15,),
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.red.shade400,
                           padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                         ),
-                        child: Text('End Trip', style: TextStyle(color: Colors.white)),
+                        child: Text('End Trip', style: TextStyle(color: Colors.black)),
                       ),
                     ],
                   )
@@ -119,12 +120,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 SizedBox(height: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.red.shade400,
                     padding: EdgeInsets.symmetric(vertical: 12),
                     minimumSize: Size(double.infinity, 40),
                   ),
                   onPressed: () {},
-                  child: Text('SOS', style: TextStyle(color: Colors.white)),
+                  child: Text('SOS', style: TextStyle(color: Colors.black)),
                 ),
               ],
             ),

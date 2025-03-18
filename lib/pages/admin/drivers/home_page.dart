@@ -42,7 +42,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Drivers"),
-        backgroundColor: Colors.brown.shade700,
+        backgroundColor: Colors.yellow.shade700,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -73,6 +73,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)),
             elevation: 4,
+            color: Colors.yellow.shade100,
             margin: EdgeInsets.symmetric(vertical: 8),
             child: Padding(
               padding: EdgeInsets.all(12),

@@ -62,7 +62,7 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Routes"),
-        backgroundColor: Colors.brown.shade700,
+        backgroundColor: Colors.yellow.shade700,
       ),
       body: Padding(
         padding: EdgeInsets.all(12.0),
@@ -75,6 +75,7 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
                   final route = _routes[index];
                   return Card(
                     elevation: 3,
+                    color: Colors.yellow.shade100,
                     margin: EdgeInsets.symmetric(vertical: 8),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: Padding(
