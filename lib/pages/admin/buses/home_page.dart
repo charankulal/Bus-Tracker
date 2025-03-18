@@ -15,6 +15,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
     busStream = await BusDatabaseMethods().getAllBuses();
     setState(() {}); // Triggers UI update
   }
+
   @override
   void initState() {
     super.initState();
@@ -22,10 +23,21 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
   }
 
   void _deleteBus(String busId) async {
-    await BusDatabaseMethods().deleteBus(busId);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text("Bus Deleted Successfully")));
+    await BusDatabaseMethods()
+        .deleteBus(busId)
+        .then((value) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Bus Deleted Successfully")));
+        })
+        .catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Failed to add bus details: ${error.toString()}"),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        });
   }
 
   void _addBus() {
@@ -101,10 +113,12 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.blue,
                                     ),
-                                    onPressed: () => {
-                                      _busNoController.text = busData["bus_number"],
-                                      editBus(busData['busId'])
-                                    },
+                                    onPressed:
+                                        () => {
+                                          _busNoController.text =
+                                              busData["bus_number"],
+                                          editBus(busData['busId']),
+                                        },
                                     child: Text(
                                       "Edit",
                                       style: TextStyle(color: Colors.white),
@@ -181,7 +195,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                 Text(
                   "Bus Number",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 22.0,
                     fontWeight: FontWeight.normal,
                   ),
@@ -200,17 +214,19 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                   ),
                 ),
 
-
+                SizedBox(height: 10.0),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
-                      RegExp busNumberRegex = RegExp(r'^[A-Za-z]{2} \d{2}[ ]{0,1}[A-Za-z]{0,2} \d{4}$');
+                      RegExp busNumberRegex = RegExp(
+                        r'^[A-Za-z]{2} \d{2}[ ]{0,1}[A-Za-z]{0,2} \d{4}$',
+                      );
 
                       if (_busNoController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("Please fill all fields"),
-                            duration: Duration( seconds: 1),
+                            duration: Duration(seconds: 1),
                           ),
                         );
                         return;
@@ -219,7 +235,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("Bus Number is Invalid"),
-                            duration: Duration( seconds: 1),
+                            duration: Duration(seconds: 1),
                           ),
                         );
                         return;
@@ -228,24 +244,29 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                       Map<String, dynamic> updateInfo = {
                         "bus_number": _busNoController.text,
                       };
-                      await BusDatabaseMethods().updateBus(id, updateInfo).then((
-                        value,
-                      ) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Bus details updated successfully"),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      }).catchError((error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Failed to edit bus details: ${error.toString()}"),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
-                      });
+                      await BusDatabaseMethods()
+                          .updateBus(id, updateInfo)
+                          .then((value) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Bus details updated successfully",
+                                ),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                            Navigator.pop(context);
+                          })
+                          .catchError((error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  "Failed to edit bus details: ${error.toString()}",
+                                ),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          });
                     },
                     child: Text("Update"),
                   ),
