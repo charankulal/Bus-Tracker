@@ -12,4 +12,7 @@ class DriverDatabaseServices {
 
     await docRef.set(driverInfo);
   }
+  Future<Stream<QuerySnapshot>> getAllDrivers() async {
+    return driverCollection.snapshots();
+  }
 }
