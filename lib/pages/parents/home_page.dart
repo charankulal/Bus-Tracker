@@ -11,6 +11,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.yellow.shade400,
       body: Stack(
         children: [
           Column(
@@ -28,7 +29,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                           style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                              color: Colors.black),
                         ),
                         CircleAvatar(
                           radius: 30,
@@ -45,19 +46,19 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                       ),
                       child: Text(
                         'ALERT! : Bus arrives in 5 minutes',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                     ),
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Icon(Icons.calendar_today, color: Colors.white),
+                        Icon(Icons.calendar_today, color: Colors.black),
                         SizedBox(width: 5),
-                        Text('05/10', style: TextStyle(color: Colors.white)),
+                        Text('05/10', style: TextStyle(color: Colors.black)),
                         SizedBox(width: 10),
-                        Icon(Icons.location_on, color: Colors.white),
+                        Icon(Icons.location_on, color: Colors.black),
                         SizedBox(width: 5),
-                        Text('Ujire', style: TextStyle(color: Colors.white)),
+                        Text('Ujire', style: TextStyle(color: Colors.black)),
                       ],
                     ),
                     SizedBox(height: 10),
@@ -117,9 +118,9 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade400),
                       onPressed: () {},
-                      child: Text('Call Driver', style: TextStyle(color: Colors.white)),
+                      child: Text('Call Driver', style: TextStyle(color: Colors.black)),
                     ),
                   ],
                 ),
@@ -140,7 +141,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                     child: Icon(
                       Icons.map,
                       size: 100,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ),

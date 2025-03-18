@@ -35,7 +35,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Route"),
-        backgroundColor: Colors.brown.shade700,
+        backgroundColor: Colors.yellow.shade700,
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -21,7 +21,7 @@ class StudentsHomePage extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.brown.shade700, Colors.brown.shade300],
+                colors: [Colors.yellow.shade700, Colors.yellow.shade300],
               ),
             ),
             child: Column(
@@ -36,10 +36,10 @@ class StudentsHomePage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
-                    Icon(Icons.people, size: 30, color: Colors.white),
+                    Icon(Icons.people, size: 30, color: Colors.black),
                   ],
                 ),
                 SizedBox(height: 10),
@@ -57,6 +57,7 @@ class StudentsHomePage extends StatelessWidget {
                 final student = students[index];
                 return Card(
                   elevation: 3,
+                  color: Colors.yellow.shade100,
                   margin: EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

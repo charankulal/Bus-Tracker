@@ -16,7 +16,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add New Student"),
-        backgroundColor: Colors.brown.shade700,
+        backgroundColor: Colors.yellow.shade700,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

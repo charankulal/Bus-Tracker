@@ -62,7 +62,7 @@ class _AddBusPageState extends State<AddBusPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Bus"),
-        backgroundColor: Colors.brown.shade700,
+        backgroundColor: Colors.yellow.shade700,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
