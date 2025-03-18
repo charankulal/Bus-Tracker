@@ -1,3 +1,4 @@
+import 'package:bus_tracking_app/services/admin/driver.dart';
 import 'package:flutter/material.dart';
 
 class AddDriverPage extends StatefulWidget {
@@ -8,19 +9,42 @@ class AddDriverPage extends StatefulWidget {
 class _AddDriverPageState extends State<AddDriverPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  String? _selectedBus;
-  String? _selectedRoute;
 
-  final List<String> buses = ["KA-01-1234", "KA-02-5678", "KA-03-9876"];
-  final List<String> routes = ["Route A", "Route B", "Route C"];
+  void _addDriver() async {
+    final RegExp phoneNumRegEx = RegExp(r'^[6-9]\d{9}$');
+    final RegExp nameRegEx = RegExp(r"^[A-Za-z]+(?:[-' ][A-Za-z]+)*$");
 
-  void _addDriver() {
-    if (_nameController.text.isEmpty || _phoneController.text.isEmpty || _selectedBus == null || _selectedRoute == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all fields")));
+    if (_nameController.text.isEmpty || _phoneController.text.isEmpty ) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all fields"), duration: Duration(seconds: 1),));
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Driver Added Successfully")));
-    Navigator.pop(context); // Navigate back to Admin Drivers Home Page
+    if (!nameRegEx.hasMatch(_nameController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please enter valid name"), duration: Duration(seconds: 1),));
+      return;
+    }
+    if (!phoneNumRegEx.hasMatch(_phoneController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please enter valid phone number"), duration: Duration(seconds: 1),));
+      return;
+    }
+
+    Map<String, dynamic> driverInfo = {"name": _nameController.text, "phone":_phoneController.text};
+    await DriverDatabaseServices().addDriver(driverInfo).then((value) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Driver Details Added Successfully"),
+          duration: Duration(seconds: 1),
+        ),
+      );
+
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to add driver details: ${error.toString()}"),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    });
   }
 
   void _cancel() {
