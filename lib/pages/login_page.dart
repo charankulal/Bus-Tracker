@@ -187,55 +187,51 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                   );
                 }
                 if (_selectedRole == 'Admin') {
-                  // if (_passwordController.text.isEmpty) {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(
-                  //       content: Text("Password cannot be empty!"),
-                  //       duration: Duration(seconds: 1),
-                  //     ),
-                  //   );
-                  //   return;
-                  // }
+                  if (_passwordController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Password cannot be empty!"),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    return;
+                  }
 
-                  //   String enteredPassword = _passwordController.text.trim();
-                  //   List<String> adminPasswords = await AdminLoginServices().getAllAdminPasswords();
-                  //
-                  //   if (adminPasswords.isEmpty) {
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       SnackBar(
-                  //         content: Text("Error retrieving admin credentials!"),
-                  //         duration: Duration(seconds: 2),
-                  //       ),
-                  //     );
-                  //     return;
-                  //   }
-                  //
-                  //   if (adminPasswords.contains(enteredPassword)) {
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       SnackBar(
-                  //         content: Text("Login Successful"),
-                  //         duration: Duration(seconds: 2),
-                  //       ),
-                  //     );
-                  //
-                  //     Navigator.pushReplacement(
-                  //       context,
-                  //       MaterialPageRoute(builder: (context) => AdminHomeScreen()),
-                  //     );
-                  //   } else {
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //       SnackBar(
-                  //         content: Text("Incorrect Password!"),
-                  //         duration: Duration(seconds: 2),
-                  //       ),
-                  //     );
-                  //   }
-                  // }
-                  Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => AdminHomeScreen()),
-                          );
-                }
+                    String enteredPassword = _passwordController.text.trim();
+                    List<String> adminPasswords = await AdminLoginServices().getAllAdminPasswords();
+
+                    if (adminPasswords.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Error retrieving admin credentials!"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      return;
+                    }
+
+                    if (adminPasswords.contains(enteredPassword)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Login Successful"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => AdminHomeScreen()),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Incorrect Password!"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  }
+
               },
               child: Text(
                 "Submit",
