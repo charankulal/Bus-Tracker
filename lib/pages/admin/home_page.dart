@@ -2,6 +2,7 @@ import 'package:bus_tracking_app/pages/admin/buses/home_page.dart';
 import 'package:bus_tracking_app/pages/admin/drivers/home_page.dart';
 import 'package:bus_tracking_app/pages/admin/routes/home_page.dart';
 import 'package:bus_tracking_app/pages/admin/students/home_page.dart';
+import 'package:bus_tracking_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
 class AdminHomeScreen extends StatelessWidget {
@@ -74,7 +75,23 @@ class AdminHomeScreen extends StatelessWidget {
               ],
             ),
           ),
-
+          SizedBox(height: 10),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 50),
+            ),
+            onPressed: (){
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
+            },
+            child: Text(
+              "Log out",
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ),
         ],
       ),
     );

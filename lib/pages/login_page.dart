@@ -1,6 +1,7 @@
 import 'package:bus_tracking_app/pages/admin/home_page.dart';
 import 'package:bus_tracking_app/pages/drivers/home_page.dart';
 import 'package:bus_tracking_app/pages/parents/home_page.dart';
+import 'package:bus_tracking_app/services/login/admin_login.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -157,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
-                  controller: _childNameController,
+                  controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(),
@@ -171,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.grey,
               ),
-              onPressed: () {
+              onPressed: () async {
 
                 if(_selectedRole=='Parent'){
                   Navigator.push(
@@ -185,12 +186,52 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                     MaterialPageRoute(builder: (context) => DriverHomeScreen()),
                   );
                 }
-                if(_selectedRole=='Admin'){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AdminHomeScreen()),
-                  );
+                if (_selectedRole == 'Admin') {
+                  if (_passwordController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Password cannot be empty!"),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    return;
+                  }
+
+                  String enteredPassword = _passwordController.text.trim();
+                  List<String> adminPasswords = await AdminLoginServices().getAllAdminPasswords();
+
+                  if (adminPasswords.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Error retrieving admin credentials!"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+
+                  if (adminPasswords.contains(enteredPassword)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Login Successful"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => AdminHomeScreen()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Incorrect Password!"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 }
+
               },
               child: Text(
                 "Submit",
