@@ -11,8 +11,10 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
   Stream? driverStream;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final RegExp phoneNumRegEx = RegExp(r'^[6-9]\d{9}$');
   final RegExp nameRegEx = RegExp(r"^[A-Za-z]+(?:[-' ][A-Za-z]+)*$");
+  final RegExp passwordRegEx = RegExp(r"^(?=.*[A-Za-z])(?=.*\d).{8,}$");
 
   _loadDrivers() async {
     driverStream = await DriverDatabaseServices().getAllDrivers();
@@ -110,6 +112,10 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                 style: TextStyle(fontSize: 16),
                               ),
                               Text(
+                                "🔒 ${driver["password"]}",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              Text(
                                 "🚌 Bus No: ",
                                 style: TextStyle(fontSize: 16),
                               ),
@@ -129,10 +135,21 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                     onPressed: () {
                                       _nameController.text = driver["name"];
                                       _phoneController.text = driver["phone"];
+                                      _passwordController.text = driver["password"];
                                       editDriver(driver["driverId"]!);
                                     },
                                     child: Text(
                                       "Edit",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.greenAccent,
+                                    ),
+                                    onPressed: () {},
+                                    child: Text(
+                                      "Call",
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
@@ -225,6 +242,13 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                     labelText: "Phone Number",
                     border: OutlineInputBorder(),
                   ),
+                ),SizedBox(height: 10.0),
+                TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(),
+                  ),
                 ),
 
                 SizedBox(height: 10.0),
@@ -259,10 +283,20 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                         );
                         return;
                       }
+                      if (!passwordRegEx.hasMatch(_passwordController.text)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Please enter valid password"),
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                        return;
+                      }
 
                       Map<String, dynamic> updateInfo = {
                         "name": _nameController.text,
                         "phone": _phoneController.text,
+                        "password": _passwordController.text,
                       };
                       await DriverDatabaseServices()
                           .updateDriver(id, updateInfo)

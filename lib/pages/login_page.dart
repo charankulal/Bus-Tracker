@@ -144,13 +144,24 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                 child: TextField(
                   controller: _childNameController,
                   decoration: InputDecoration(
-                    labelText: 'Bus No',
+                    labelText: 'Phone Number',
                     border: OutlineInputBorder(),
                   ),
                 ),
               ),
               SizedBox(height: 10),
-
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
             ],
 
             if (_selectedRole == 'Admin') ...[
