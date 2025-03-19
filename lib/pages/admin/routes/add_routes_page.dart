@@ -1,3 +1,6 @@
+import 'package:bus_tracking_app/services/admin/bus.dart';
+import 'package:bus_tracking_app/services/admin/driver.dart';
+import 'package:bus_tracking_app/services/admin/routes.dart';
 import 'package:flutter/material.dart';
 
 class AddRoutePage extends StatefulWidget {
@@ -10,21 +13,61 @@ class _AddRoutePageState extends State<AddRoutePage> {
   final TextEditingController _startLocationController = TextEditingController();
   final TextEditingController _endLocationController = TextEditingController();
 
-  String? _selectedBus;
-  String? _selectedDriver;
+  String? _selectedBusId;
+  String? _selectedDriverId;
+  List<Map<String, dynamic>> _driversList = [];
+  List<Map<String, dynamic>> _busList = [];
 
-  final List<String> _busNumbers = ["KA-01-1234", "KA-02-5678", "KA-03-9876"];
-  final List<String> _drivers = ["John Doe", "Michael Smith", "David Johnson"];
+  @override
+  void initState() {
+    super.initState();
+    fetchDrivers();
+    fetchBuses();
+  }
 
-  void _saveRoute() {
+  void fetchDrivers() async {
+    _driversList = await DriverDatabaseServices().getAllDriversIDName();
+    setState(() {});
+  }
+  void fetchBuses() async {
+    _busList = await BusDatabaseMethods().getAllBusIDNumber();
+    setState(() {});
+  }
+
+  void _saveRoute() async {
     if (_routeNameController.text.isNotEmpty &&
         _startLocationController.text.isNotEmpty &&
         _endLocationController.text.isNotEmpty &&
-        _selectedBus != null &&
-        _selectedDriver != null) {
-      // Save Route Logic
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Route Added Successfully")));
-      Navigator.pop(context);
+        _selectedBusId != null &&
+        _selectedDriverId != null) {
+      Map<String, dynamic> _routeInfo = {
+        "route_name": _routeNameController.text,
+        "start_location": _startLocationController.text,
+        "end_location":_endLocationController.text,
+        "busId":_selectedBusId,
+        "driverId":_selectedDriverId,
+      };
+      await RoutesDatabaseService()
+          .addRoute(_routeInfo)
+          .then((value) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Route Added Successfully"),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      })
+          .catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Failed to add driver details: ${error.toString()}",
+            ),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all fields")));
     }
@@ -59,20 +102,26 @@ class _AddRoutePageState extends State<AddRoutePage> {
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value: _selectedBus,
-                items: _busNumbers.map((bus) {
-                  return DropdownMenuItem(value: bus, child: Text(bus));
+                value: _selectedBusId,
+                items: _busList.map((driver) {
+                  return DropdownMenuItem<String>(
+                    value: driver["busId"], // Use driver ID as value
+                    child: Text(driver["bus_number"]), // Show driver name in UI
+                  );
                 }).toList(),
-                onChanged: (value) => setState(() => _selectedBus = value),
+                onChanged: (value) => setState(() => _selectedBusId = value),
                 decoration: InputDecoration(labelText: "Select Bus", border: OutlineInputBorder()),
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value: _selectedDriver,
-                items: _drivers.map((driver) {
-                  return DropdownMenuItem(value: driver, child: Text(driver));
+                value: _selectedDriverId,
+                items: _driversList.map((driver) {
+                  return DropdownMenuItem<String>(
+                    value: driver["driverId"], // Use driver ID as value
+                    child: Text(driver["name"]), // Show driver name in UI
+                  );
                 }).toList(),
-                onChanged: (value) => setState(() => _selectedDriver = value),
+                onChanged: (value) => setState(() => _selectedDriverId = value),
                 decoration: InputDecoration(labelText: "Select Driver", border: OutlineInputBorder()),
               ),
               SizedBox(height: 10),
@@ -86,7 +135,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     onPressed: () {
-                      // Save Student Logic Here
+                      _saveRoute();
                     },
                     child: Text("Save", style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),

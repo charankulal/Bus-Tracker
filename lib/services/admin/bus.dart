@@ -24,4 +24,15 @@ class BusDatabaseMethods {
   Future deleteBus(String busId) async {
     return await busCollection.doc(busId).delete();
   }
+
+  Future<List<Map<String, dynamic>>> getAllBusIDNumber() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("bus").get();
+
+    return querySnapshot.docs.map((doc) {
+      return {
+        "busId": doc.id,
+        "bus_number": doc["bus_number"],
+      };
+    }).toList();
+  }
 }

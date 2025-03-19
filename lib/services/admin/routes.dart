@@ -12,4 +12,8 @@ class RoutesDatabaseService{
 
     await docRef.set(routeInfo);
   }
+
+  Future<Stream<QuerySnapshot>> getAllRoutes() async {
+    return routeCollection.snapshots();
+  }
 }

@@ -24,4 +24,16 @@ class DriverDatabaseServices {
   Future deleteDriver(String driverId) async {
     return await driverCollection.doc(driverId).delete();
   }
+
+  Future<List<Map<String, dynamic>>> getAllDriversIDName() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("driver").get();
+
+    return querySnapshot.docs.map((doc) {
+      return {
+        "driverId": doc.id,
+        "name": doc["name"],
+      };
+    }).toList();
+  }
+
 }
