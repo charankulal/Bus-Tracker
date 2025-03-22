@@ -35,4 +35,18 @@ class BusDatabaseMethods {
       };
     }).toList();
   }
+  Future<String> getBusNumberById(String busId) async {
+    try {
+      DocumentSnapshot busSnapshot = await busCollection.doc(busId).get();
+      if (busSnapshot.exists) {
+        return busSnapshot["bus_number"] ?? "Unknown";
+      } else {
+        return "Not Found";
+      }
+    } catch (e) {
+      print("Error fetching bus details: $e");
+      return "Error";
+    }
+  }
+
 }

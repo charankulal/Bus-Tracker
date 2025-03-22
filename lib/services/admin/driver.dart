@@ -36,4 +36,32 @@ class DriverDatabaseServices {
     }).toList();
   }
 
+  Future<String> getDriverNameById(String driverId) async {
+    try {
+      DocumentSnapshot driverSnapshot = await driverCollection.doc(driverId).get();
+      if (driverSnapshot.exists) {
+        return driverSnapshot["name"] ?? "Unknown";
+      } else {
+        return "Not Found";
+      }
+    } catch (e) {
+      print("Error fetching bus details: $e");
+      return "Error";
+    }
+  }
+
+  Future<String> getDriverPhoneById(String driverId) async {
+    try {
+      DocumentSnapshot driverSnapshot = await driverCollection.doc(driverId).get();
+      if (driverSnapshot.exists) {
+        return driverSnapshot["phone"] ?? "Unknown";
+      } else {
+        return "Not Found";
+      }
+    } catch (e) {
+      print("Error fetching bus details: $e");
+      return "Error";
+    }
+  }
+
 }

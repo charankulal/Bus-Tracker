@@ -4,6 +4,7 @@ import 'package:bus_tracking_app/services/admin/driver.dart';
 import 'package:bus_tracking_app/services/admin/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 
 class AddRoutePage extends StatefulWidget {
   @override
@@ -14,6 +15,9 @@ class _AddRoutePageState extends State<AddRoutePage> {
   final TextEditingController _routeNameController = TextEditingController();
   final TextEditingController _startLocationController = TextEditingController();
   final TextEditingController _endLocationController = TextEditingController();
+  final FocusNode _startLocationFocusNode = FocusNode();
+  final FocusNode _endLocationFocusNode = FocusNode();
+
   Map<String, double>? _startLocation;
   Map<String, double>? _endLocation;
   String? _selectedBusId;
@@ -45,8 +49,10 @@ class _AddRoutePageState extends State<AddRoutePage> {
         _selectedDriverId != null) {
       Map<String, dynamic> _routeInfo = {
         "route_name": _routeNameController.text,
-        "start_location": _startLocationController.text,
-        "end_location":_endLocationController.text,
+        "start_loc_name":_startLocationController.text,
+        "end_loc_name":_endLocationController.text,
+        "start_location": _startLocation,
+        "end_location":_endLocation,
         "busId":_selectedBusId,
         "driverId":_selectedDriverId,
       };
@@ -96,9 +102,17 @@ class _AddRoutePageState extends State<AddRoutePage> {
               SizedBox(height: 10),
               GooglePlaceAutoCompleteTextField(
                 textEditingController: _startLocationController,
-                googleAPIKey: google_api_key,
+                googleAPIKey: google_api_key_places,
+                focusNode: _startLocationFocusNode,
                 inputDecoration: InputDecoration(labelText: "Start Location", border: OutlineInputBorder()),
                 debounceTime: 600,
+                itemClick: (Prediction prediction) {
+                  _startLocationController.text = prediction.description ?? "";
+                  _startLocationController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: _startLocationController.text.length),
+                  );
+                  FocusScope.of(context).requestFocus(_endLocationFocusNode); // Move focus to end location
+                },
                 getPlaceDetailWithLatLng: (placeDetail) {
                   setState(() {
                     _startLocation = {
@@ -108,16 +122,20 @@ class _AddRoutePageState extends State<AddRoutePage> {
                   });
                 },
               ),
-              // TextField(
-              //   controller: _startLocationController,
-              //   decoration: InputDecoration(labelText: "Start Location", border: OutlineInputBorder()),
-              // ),
               SizedBox(height: 10),
               GooglePlaceAutoCompleteTextField(
                 textEditingController: _endLocationController,
-                googleAPIKey: google_api_key,
+                googleAPIKey: google_api_key_places,
+                focusNode: _endLocationFocusNode,
                 inputDecoration: InputDecoration(labelText: "End Location", border: OutlineInputBorder()),
                 debounceTime: 600,
+                itemClick: (Prediction prediction) {
+                  _endLocationController.text = prediction.description ?? "";
+                  _endLocationController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: _endLocationController.text.length),
+                  );
+                  FocusScope.of(context).unfocus(); // Remove focus after selecting end location
+                },
                 getPlaceDetailWithLatLng: (placeDetail) {
                   setState(() {
                     _endLocation = {
@@ -127,10 +145,6 @@ class _AddRoutePageState extends State<AddRoutePage> {
                   });
                 },
               ),
-              // TextField(
-              //   controller: _endLocationController,
-              //   decoration: InputDecoration(labelText: "End Location", border: OutlineInputBorder()),
-              // ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 value: _selectedBusId,

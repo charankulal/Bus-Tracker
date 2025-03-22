@@ -1,5 +1,8 @@
 import 'package:bus_tracking_app/pages/admin/routes/add_routes_page.dart';
+import 'package:bus_tracking_app/services/admin/driver.dart';
+import 'package:bus_tracking_app/services/admin/routes.dart';
 import 'package:flutter/material.dart';
+import '../../../services/admin/bus.dart';
 
 class AdminRoutesHomePage extends StatefulWidget {
   @override
@@ -7,47 +10,27 @@ class AdminRoutesHomePage extends StatefulWidget {
 }
 
 class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
-  final List<Map<String, String>> _routes = [
-    {
-      "routeName": "Route A",
-      "startLocation": "City Center",
-      "endLocation": "North Avenue",
-      "busNo": "KA-01-1234",
-      "driverName": "John Doe",
-      "driverPhone": "9876543210"
-    },
-    {
-      "routeName": "Route B",
-      "startLocation": "South Park",
-      "endLocation": "East Square",
-      "busNo": "KA-02-5678",
-      "driverName": "Michael Smith",
-      "driverPhone": "9876509876"
-    },{
-      "routeName": "Route B",
-      "startLocation": "South Park",
-      "endLocation": "East Square",
-      "busNo": "KA-02-5678",
-      "driverName": "Michael Smith",
-      "driverPhone": "9876509876"
-    },{
-      "routeName": "Route B",
-      "startLocation": "South Park",
-      "endLocation": "East Square",
-      "busNo": "KA-02-5678",
-      "driverName": "Michael Smith",
-      "driverPhone": "9876509876"
-    }
-  ];
+  Stream? routeStream;
 
   void _editRoute(int index) {
     // Edit route logic
   }
 
+  _loadRoutes() async {
+    routeStream = await RoutesDatabaseService().getAllRoutes();
+    setState(() {}); // Triggers UI update
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRoutes();
+  }
+
   void _deleteRoute(int index) {
-    setState(() {
-      _routes.removeAt(index);
-    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Id ${index}"), duration: Duration(seconds: 1)),
+    );
   }
 
   void _addRoute() {
@@ -69,48 +52,156 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                itemCount: _routes.length,
-                itemBuilder: (context, index) {
-                  final route = _routes[index];
-                  return Card(
-                    elevation: 3,
-                    color: Colors.yellow.shade100,
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(route["routeName"]!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          SizedBox(height: 4),
-                          Text("Start: ${route["startLocation"]}"),
-                          Text("End: ${route["endLocation"]}"),
-                          Text("Bus No: ${route["busNo"]}"),
-                          Text("Driver: ${route["driverName"]}"),
-                          Text("Phone: ${route["driverPhone"]}"),
-                          SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: StreamBuilder(
+                stream: routeStream,
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  var routes = snapshot.data.docs;
+                  if (routes.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "No Routes available",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: routes.length,
+                    itemBuilder: (context, index) {
+                      final route = routes[index];
+                      return Card(
+                        elevation: 3,
+                        color: Colors.yellow.shade100,
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                                onPressed: () => _editRoute(index),
-                                icon: Icon(Icons.edit, color: Colors.white),
-                                label: Text("Edit", style: TextStyle(color: Colors.white)),
+                              Text(
+                                route["route_name"]!,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                                onPressed: () => _deleteRoute(index),
-                                icon: Icon(Icons.delete, color: Colors.white),
-                                label: Text("Delete", style: TextStyle(color: Colors.white)),
+                              SizedBox(height: 4),
+                              Text("Start: ${route["start_loc_name"]}"),
+                              Text("End: ${route["end_loc_name"]}"),
+                              FutureBuilder(
+                                future: BusDatabaseMethods().getBusNumberById(
+                                  route["busId"],
+                                ),
+                                builder: (
+                                  context,
+                                  AsyncSnapshot<String> snapshot,
+                                ) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Text(
+                                      "Bus No: Loading...",
+                                    ); // Placeholder while fetching
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                      "Bus No: Error",
+                                    ); // Error handling
+                                  } else {
+                                    return Text(
+                                      "Bus No: ${snapshot.data}",
+                                    ); // Display Bus Number
+                                  }
+                                },
+                              ),
+                              FutureBuilder(
+                                future: DriverDatabaseServices()
+                                    .getDriverNameById(route["driverId"]),
+                                builder: (
+                                  context,
+                                  AsyncSnapshot<String> snapshot,
+                                ) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Text(
+                                      "Driver: Loading...",
+                                    ); // Placeholder while fetching
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                      "Driver: Error",
+                                    ); // Error handling
+                                  } else {
+                                    return Text(
+                                      "Driver: ${snapshot.data}",
+                                    ); // Display Bus Number
+                                  }
+                                },
+                              ),
+                              FutureBuilder(
+                                future: DriverDatabaseServices()
+                                    .getDriverPhoneById(route["driverId"]),
+                                builder: (
+                                  context,
+                                  AsyncSnapshot<String> snapshot,
+                                ) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Text(
+                                      "Driver Phone: Loading...",
+                                    ); // Placeholder while fetching
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                      "Driver Phone: Error",
+                                    ); // Error handling
+                                  } else {
+                                    return Text(
+                                      "Driver Phone: ${snapshot.data}",
+                                    ); // Display Bus Number
+                                  }
+                                },
+                              ),
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                    ),
+                                    onPressed: () => _editRoute(index),
+                                    icon: Icon(Icons.edit, color: Colors.white),
+                                    label: Text(
+                                      "Edit",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                    onPressed: () => _deleteRoute(index),
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    ),
+                                    label: Text(
+                                      "Delete",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -120,10 +211,15 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 padding: EdgeInsets.symmetric(vertical: 14, horizontal: 40),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: _addRoute,
-              child: Text("Add Route", style: TextStyle(color: Colors.white, fontSize: 18)),
+              child: Text(
+                "Add Route",
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
             ),
           ],
         ),
