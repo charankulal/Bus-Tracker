@@ -26,19 +26,18 @@ class DriverDatabaseServices {
   }
 
   Future<List<Map<String, dynamic>>> getAllDriversIDName() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("driver").get();
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection("driver").get();
 
     return querySnapshot.docs.map((doc) {
-      return {
-        "driverId": doc.id,
-        "name": doc["name"],
-      };
+      return {"driverId": doc.id, "name": doc["name"]};
     }).toList();
   }
 
   Future<String> getDriverNameById(String driverId) async {
     try {
-      DocumentSnapshot driverSnapshot = await driverCollection.doc(driverId).get();
+      DocumentSnapshot driverSnapshot =
+          await driverCollection.doc(driverId).get();
       if (driverSnapshot.exists) {
         return driverSnapshot["name"] ?? "Unknown";
       } else {
@@ -52,7 +51,8 @@ class DriverDatabaseServices {
 
   Future<String> getDriverPhoneById(String driverId) async {
     try {
-      DocumentSnapshot driverSnapshot = await driverCollection.doc(driverId).get();
+      DocumentSnapshot driverSnapshot =
+          await driverCollection.doc(driverId).get();
       if (driverSnapshot.exists) {
         return driverSnapshot["phone"] ?? "Unknown";
       } else {
@@ -63,24 +63,25 @@ class DriverDatabaseServices {
       return "Error";
     }
   }
+
   Future<List<Map<String, dynamic>>> getUnassociatedDrivers() async {
     try {
-      QuerySnapshot driverSnapshot = await FirebaseFirestore.instance.collection("driver").get();
-      List<Map<String, dynamic>> allDrivers = driverSnapshot.docs.map((doc) {
-        return {
-          "driverId": doc.id,
-          "name": doc["name"],
-        };
-      }).toList();
+      QuerySnapshot driverSnapshot =
+          await FirebaseFirestore.instance.collection("driver").get();
+      List<Map<String, dynamic>> allDrivers =
+          driverSnapshot.docs.map((doc) {
+            return {"driverId": doc.id, "name": doc["name"]};
+          }).toList();
 
-      QuerySnapshot routeSnapshot = await FirebaseFirestore.instance.collection("route").get();
-      List<String> assignDriverIds = routeSnapshot.docs
-          .map((doc) => doc["driverId"] as String)
-          .toList();
+      QuerySnapshot routeSnapshot =
+          await FirebaseFirestore.instance.collection("route").get();
+      List<String> assignDriverIds =
+          routeSnapshot.docs.map((doc) => doc["driverId"] as String).toList();
 
-      List<Map<String, dynamic>> unassociatedDrivers = allDrivers
-          .where((driver) => !assignDriverIds.contains(driver["driverId"]))
-          .toList();
+      List<Map<String, dynamic>> unassociatedDrivers =
+          allDrivers
+              .where((driver) => !assignDriverIds.contains(driver["driverId"]))
+              .toList();
 
       return unassociatedDrivers;
     } catch (e) {
@@ -89,4 +90,49 @@ class DriverDatabaseServices {
     }
   }
 
+  final CollectionReference routeCollection = FirebaseFirestore.instance
+      .collection('route');
+
+  Future<String?> getRouteNameByDriverId(String driverId) async {
+    try {
+      QuerySnapshot querySnapshot =
+          await routeCollection.where('driverId', isEqualTo: driverId).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first['route_name'] as String?;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching route name: $e");
+      return null;
+    }
+  }
+
+  final CollectionReference busCollection = FirebaseFirestore.instance
+      .collection('bus');
+
+  Future<String?> getBusNumberByDriverId(String driverId) async {
+    try {
+      QuerySnapshot routeSnapshot =
+          await routeCollection.where('driverId', isEqualTo: driverId).get();
+
+      if (routeSnapshot.docs.isEmpty) {
+        return null;
+      }
+
+      String busId = routeSnapshot.docs.first['busId'];
+
+      DocumentSnapshot busSnapshot = await busCollection.doc(busId).get();
+
+      if (!busSnapshot.exists) {
+        return null;
+      }
+
+      return busSnapshot['bus_number'] as String?;
+    } catch (e) {
+      print("Error fetching bus number: $e");
+      return null;
+    }
+  }
 }

@@ -115,13 +115,104 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                 "🔒 ${driver["password"]}",
                                 style: TextStyle(fontSize: 16),
                               ),
+
                               Text(
                                 "🚌 Bus No: ",
                                 style: TextStyle(fontSize: 16),
                               ),
-                              Text(
-                                "📍 Route: ",
-                                style: TextStyle(fontSize: 16),
+                              FutureBuilder(
+                                future: DriverDatabaseServices()
+                                    .getBusNumberByDriverId(driver["driverId"]),
+                                builder: (
+                                  context,
+                                  AsyncSnapshot<String?> snapshot,
+                                ) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Text(
+                                      "🚌 Bus No: : Loading...",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ); // Show loading text
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                      "🚌 Bus No: : Error",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ); // Show error text
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data == null) {
+                                    return Text(
+                                      "🚌 Bus No: : Not Assigned",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                      ),
+                                    ); // Show when no route is assigned
+                                  } else {
+                                    return Text(
+                                      "🚌 Bus No: : ${snapshot.data}",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ); // Display fetched route name
+                                  }
+                                },
+                              ),
+                              FutureBuilder(
+                                future: DriverDatabaseServices()
+                                    .getRouteNameByDriverId(driver["driverId"]),
+                                builder: (
+                                  context,
+                                  AsyncSnapshot<String?> snapshot,
+                                ) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Text(
+                                      "📍 Route: Loading...",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ); // Show loading text
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                      "📍 Route: Error",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ); // Show error text
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data == null) {
+                                    return Text(
+                                      "📍 Route: Not Assigned",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                      ),
+                                    ); // Show when no route is assigned
+                                  } else {
+                                    return Text(
+                                      "📍 Route: ${snapshot.data}",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ); // Display fetched route name
+                                  }
+                                },
                               ),
                               SizedBox(height: 8),
                               Row(
@@ -135,7 +226,8 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                     onPressed: () {
                                       _nameController.text = driver["name"];
                                       _phoneController.text = driver["phone"];
-                                      _passwordController.text = driver["password"];
+                                      _passwordController.text =
+                                          driver["password"];
                                       editDriver(driver["driverId"]!);
                                     },
                                     child: Text(
@@ -242,7 +334,8 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                     labelText: "Phone Number",
                     border: OutlineInputBorder(),
                   ),
-                ),SizedBox(height: 10.0),
+                ),
+                SizedBox(height: 10.0),
                 TextField(
                   controller: _passwordController,
                   decoration: InputDecoration(
