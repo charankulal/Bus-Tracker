@@ -52,7 +52,7 @@ class AdminHomeScreen extends StatelessWidget {
                     SizedBox(width: 10),
                     Icon(Icons.location_on, color: Colors.black),
                     SizedBox(width: 5),
-                    Text('Ujire', style: TextStyle(color: Colors.black)),
+                    Text('Mangalore', style: TextStyle(color: Colors.black)),
                   ],
                 ),
               ],
@@ -108,7 +108,7 @@ class AdminHomeScreen extends StatelessWidget {
         if(title=='Students'){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => StudentsHomePage()),
+            MaterialPageRoute(builder: (context) => AdminStudentsHomePage()),
           );
         }
         if(title=='Routes'){

@@ -1,13 +1,28 @@
 import 'package:bus_tracking_app/pages/admin/students/add_student_page.dart';
+import 'package:bus_tracking_app/services/admin/routes.dart';
+import 'package:bus_tracking_app/services/admin/students.dart';
 import 'package:flutter/material.dart';
 
-class StudentsHomePage extends StatelessWidget {
-  final List<Map<String, String>> students = [
-    {"name": "John Doe", "phone": "9876543210", "route": "Route A"},
-    {"name": "Emma Smith", "phone": "8765432109", "route": "Route B"},
-    {"name": "Liam Johnson", "phone": "7654321098", "route": "Route C"},
-    {"name": "Olivia Brown", "phone": "6543210987", "route": "Route A"},
-  ];
+import '../../../services/admin/driver.dart';
+
+class AdminStudentsHomePage extends StatefulWidget {
+  @override
+  _AdminStudentsHomePageState createState() => _AdminStudentsHomePageState();
+}
+
+class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
+  Stream? studentStream;
+
+  _loadDrivers() async {
+    studentStream = await StudentsDatabaseServices().getAllStudents();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDrivers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,65 +65,170 @@ class StudentsHomePage extends StatelessWidget {
 
           // List of Students
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              itemCount: students.length,
-              itemBuilder: (context, index) {
-                final student = students[index];
-                return Card(
-                  elevation: 3,
-                  color: Colors.yellow.shade100,
-                  margin: EdgeInsets.symmetric(vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          student["name"]!,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 4),
-                        Text("Parent's Phone: ${student["phone"]}"),
-                        Text("Route: ${student["route"]}"),
-                        SizedBox(height: 8),
-                        Divider(color: Colors.grey.shade300),
-                        // Edit & Delete Buttons at the Bottom
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+            child: StreamBuilder(
+              stream: studentStream,
+              builder: (context, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                var students = snapshot.data.docs;
+                if (students.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "No drivers available",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  );
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: students.length,
+                  itemBuilder: (context, index) {
+                    final student = students[index];
+                    return Card(
+                      elevation: 3,
+                      color: Colors.yellow.shade100,
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            Text(
+                              student["name"]!,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
-                              onPressed: () {
-                                // Handle Edit Student
-                              },
-                              icon: Icon(Icons.edit, color: Colors.white),
-                              label: Text('Edit', style: TextStyle(color: Colors.white)),
                             ),
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                              ),
-                              onPressed: () {
-                                // Handle Delete Student
+                            SizedBox(height: 4),
+                            Text("Parent's Phone: ${student["phone"]}"),
+                            FutureBuilder(
+                              future: RoutesDatabaseService().getRouteById(student["route"]), // Call the function
+                              builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Text("Loading route details...");
+                                } else if (snapshot.hasError || snapshot.data == null) {
+                                  return Text("Route details not found", style: TextStyle(color: Colors.red));
+                                } else {
+                                  // Extract route name and driverId
+                                  String routeName = snapshot.data!['route_name'] ?? 'N/A';
+                                  String driverId = snapshot.data!['driverId'] ?? 'N/A';
+
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Route Name: $routeName", style: TextStyle(fontWeight: FontWeight.bold)),
+                                      FutureBuilder(
+                                        future: DriverDatabaseServices()
+                                            .getDriverNameById(driverId),
+                                        builder: (
+                                            context,
+                                            AsyncSnapshot<String> snapshot,
+                                            ) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Text(
+                                              "Driver: Loading...",
+                                            ); // Placeholder while fetching
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                              "Driver: Error",
+                                            ); // Error handling
+                                          } else {
+                                            return Text(
+                                              "Driver: ${snapshot.data}",
+                                            ); // Display Bus Number
+                                          }
+                                        },
+                                      ),
+                                      FutureBuilder(
+                                        future: DriverDatabaseServices()
+                                            .getDriverPhoneById(driverId),
+                                        builder: (
+                                            context,
+                                            AsyncSnapshot<String> snapshot,
+                                            ) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Text(
+                                              "Driver Phone: Loading...",
+                                            ); // Placeholder while fetching
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                              "Driver Phone: Error",
+                                            ); // Error handling
+                                          } else {
+                                            return Text(
+                                              "Driver Phone: ${snapshot.data}",
+                                            ); // Display Bus Number
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
                               },
-                              icon: Icon(Icons.delete, color: Colors.white),
-                              label: Text('Delete', style: TextStyle(color: Colors.white)),
+                            ),
+
+
+                            SizedBox(height: 8),
+                            Divider(color: Colors.grey.shade300),
+                            // Edit & Delete Buttons at the Bottom
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    // Handle Edit Student
+                                  },
+                                  icon: Icon(Icons.edit, color: Colors.white),
+                                  label: Text(
+                                    'Edit',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    // Handle Delete Student
+                                  },
+                                  icon: Icon(Icons.delete, color: Colors.white),
+                                  label: Text(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -121,7 +241,9 @@ class StudentsHomePage extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 padding: EdgeInsets.symmetric(vertical: 14, horizontal: 40),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () {
                 Navigator.push(
@@ -130,7 +252,10 @@ class StudentsHomePage extends StatelessWidget {
                 );
               },
               icon: Icon(Icons.add, color: Colors.white),
-              label: Text('Add New Student', style: TextStyle(fontSize: 18, color: Colors.white)),
+              label: Text(
+                'Add New Student',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
             ),
           ),
         ],

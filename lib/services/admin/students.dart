@@ -13,6 +13,10 @@ class StudentsDatabaseServices {
     await docRef.set(studentInfo);
   }
 
+  Future<Stream<QuerySnapshot>> getAllStudents() async {
+    return studentCollection.snapshots();
+  }
+
   Future<List<Map<String, dynamic>>> getAllRoutesIDName() async {
     QuerySnapshot querySnapshot =
     await FirebaseFirestore.instance.collection("route").get();

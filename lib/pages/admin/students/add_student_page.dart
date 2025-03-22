@@ -105,100 +105,101 @@ class _AddStudentPageState extends State<AddStudentPage> {
         title: Text("Add New Student"),
         backgroundColor: Colors.yellow.shade700,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Student Name
-            Text("Student Name", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 6),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                hintText: "Enter student's name",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // Phone Number
-            Text("Parent's Phone Number", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 6),
-            TextField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                hintText: "Enter phone number",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            ),
-
-            Text("Password", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 6),
-            TextField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                hintText: "Enter phone number",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // Route Selection (Dropdown)
-            Text("Select Route", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 6),
-            DropdownButtonFormField<String>(
-              value: _selectedRoute??"qwerty",
-              items: [
-                DropdownMenuItem<String>(
-                  value: 'qwerty',
-                  child: Text("Select Route", style: TextStyle(color: Colors.black)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Student Name
+              Text("Student Name", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 6),
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  hintText: "Enter student's name",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                ..._routesList.map((route) {
-                  return DropdownMenuItem<String>(
-                    value: route["routeId"],
-                    child: Text(route["route_name"]),
-                  );
-                }).toList(),
-              ],
-              onChanged: (value) => setState(() => _selectedRoute = value),
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
-            SizedBox(height: 24),
+              ),
+              SizedBox(height: 16),
 
-            // Save & Cancel Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              // Phone Number
+              Text("Parent's Phone Number", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 6),
+              TextField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  hintText: "Enter phone number",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+
+              Text("Password", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 6),
+              TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  hintText: "Enter password",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Route Selection (Dropdown)
+              Text("Select Route", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              SizedBox(height: 6),
+              DropdownButtonFormField<String>(
+                value: _selectedRoute??"qwerty",
+                items: [
+                  DropdownMenuItem<String>(
+                    value: 'qwerty',
+                    child: Text("Select Route", style: TextStyle(color: Colors.black)),
                   ),
-                  onPressed: () {
-                    _addStudent();
-                  },
-                  child: Text("Save", style: TextStyle(color: Colors.white, fontSize: 16)),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ..._routesList.map((route) {
+                    return DropdownMenuItem<String>(
+                      value: route["routeId"],
+                      child: Text(route["route_name"]),
+                    );
+                  }).toList(),
+                ],
+                onChanged: (value) => setState(() => _selectedRoute = value),
+                decoration: InputDecoration(border: OutlineInputBorder()),
+              ),
+              SizedBox(height: 24),
+
+              // Save & Cancel Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      _addStudent();
+                    },
+                    child: Text("Save", style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 16)),
-                ),
-              ],
-            ),
-          ],
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }
