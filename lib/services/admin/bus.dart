@@ -123,4 +123,14 @@ class BusDatabaseMethods {
       return null;
     }
   }
+
+  Future<int> getTotalBuses() async {
+    try {
+      QuerySnapshot querySnapshot = await busCollection.get();
+      return querySnapshot.docs.length;
+    } catch (e) {
+      print("Error fetching total buses: $e");
+      return 0;
+    }
+  }
 }

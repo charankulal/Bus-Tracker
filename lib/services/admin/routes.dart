@@ -41,4 +41,13 @@ class RoutesDatabaseService{
     return await routeCollection.doc(routeId).delete();
   }
 
+  Future<int> getTotalRoutes() async {
+    try {
+      QuerySnapshot querySnapshot = await routeCollection.get();
+      return querySnapshot.docs.length;
+    } catch (e) {
+      print("Error fetching total routes: $e");
+      return 0;
+    }
+  }
 }

@@ -4,10 +4,39 @@ import 'package:bus_tracking_app/pages/admin/drivers/home_page.dart';
 import 'package:bus_tracking_app/pages/admin/routes/home_page.dart';
 import 'package:bus_tracking_app/pages/admin/students/home_page.dart';
 import 'package:bus_tracking_app/pages/login_page.dart';
+import 'package:bus_tracking_app/services/admin/bus.dart';
+import 'package:bus_tracking_app/services/admin/driver.dart';
+import 'package:bus_tracking_app/services/admin/routes.dart';
 import 'package:flutter/material.dart';
+import '../../services/admin/students.dart';
 
+class AdminHomeScreen extends StatefulWidget {
+  @override
+  _AdminHomeScreenState createState() => _AdminHomeScreenState();
+}
 
-class AdminHomeScreen extends StatelessWidget {
+class _AdminHomeScreenState extends State<AdminHomeScreen> {
+  int totalStudents = 0;
+  int totalBuses = 0;
+  int totalRoutes = 0;
+  int totalDrivers = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getCount();
+  }
+
+  getCount() async{
+    totalStudents = await StudentsDatabaseServices().getTotalStudents();
+    totalRoutes = await RoutesDatabaseService().getTotalRoutes();
+    totalDrivers = await DriverDatabaseServices().getTotalDrivers();
+    totalBuses = await BusDatabaseMethods().getTotalBuses();
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -63,10 +92,10 @@ class AdminHomeScreen extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               children: [
-                _buildAdminOption(context, 'Students',17, Icons.school, Colors.blue.shade300),
-                _buildAdminOption(context, 'Routes',17, Icons.map, Colors.green.shade300),
-                _buildAdminOption(context, 'Drivers',17, Icons.directions_bus, Colors.orange.shade300),
-                _buildAdminOption(context, 'Buses',17, Icons.directions_transit, Colors.red.shade300),
+                _buildAdminOption(context, 'Students',totalStudents, Icons.school, Colors.blue.shade300),
+                _buildAdminOption(context, 'Routes',totalRoutes, Icons.map, Colors.green.shade300),
+                _buildAdminOption(context, 'Drivers',totalDrivers, Icons.directions_bus, Colors.orange.shade300),
+                _buildAdminOption(context, 'Buses',totalBuses, Icons.directions_transit, Colors.red.shade300),
               ],
             ),
           ),
@@ -132,7 +161,7 @@ class AdminHomeScreen extends StatelessWidget {
           SizedBox(height: 10),
           Text(title, style: TextStyle(fontSize: 18, color: Colors.black)),
           SizedBox(height: 10),
-          Text("Total "+title+" "+total.toString(), style: TextStyle(fontSize: 10, color: Colors.black)),
+          Text("Total "+title+" "+total.toString(), style: TextStyle(fontSize: 12, color: Colors.black)),
         ],
       ),
     );

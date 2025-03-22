@@ -50,4 +50,14 @@ class StudentsDatabaseServices {
     return await studentCollection.doc(id).delete();
   }
 
+  Future<int> getTotalStudents() async {
+    try {
+      QuerySnapshot querySnapshot = await studentCollection.get();
+      return querySnapshot.docs.length;
+    } catch (e) {
+      print("Error fetching total students: $e");
+      return 0;
+    }
+  }
+
 }

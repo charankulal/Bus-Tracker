@@ -135,4 +135,14 @@ class DriverDatabaseServices {
       return null;
     }
   }
+
+  Future<int> getTotalDrivers() async {
+    try {
+      QuerySnapshot querySnapshot = await driverCollection.get();
+      return querySnapshot.docs.length;
+    } catch (e) {
+      print("Error fetching total drivers: $e");
+      return 0;
+    }
+  }
 }
