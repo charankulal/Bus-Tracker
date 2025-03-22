@@ -3,6 +3,7 @@ import 'package:bus_tracking_app/services/admin/driver.dart';
 import 'package:bus_tracking_app/services/admin/routes.dart';
 import 'package:flutter/material.dart';
 import '../../../services/admin/bus.dart';
+import 'edit_routes.dart';
 
 class AdminRoutesHomePage extends StatefulWidget {
   @override
@@ -12,8 +13,11 @@ class AdminRoutesHomePage extends StatefulWidget {
 class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
   Stream? routeStream;
 
-  void _editRoute(int index) {
-    // Edit route logic
+  void _editRoute(String routeId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EditRoutePage(routeId: routeId)),
+    );
   }
 
   _loadRoutes() async {
@@ -174,7 +178,7 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.blue,
                                     ),
-                                    onPressed: () => _editRoute(index),
+                                    onPressed: () => _editRoute(route['routeId']),
                                     icon: Icon(Icons.edit, color: Colors.white),
                                     label: Text(
                                       "Edit",

@@ -13,7 +13,28 @@ class RoutesDatabaseService{
     await docRef.set(routeInfo);
   }
 
+  Future updateRoute(String id, Map<String, dynamic> updateInfo) async {
+    return await routeCollection.doc(id).update(updateInfo);
+  }
+
   Future<Stream<QuerySnapshot>> getAllRoutes() async {
     return routeCollection.snapshots();
   }
+
+  Future<Map<String, dynamic>?> getRouteById(String routeId) async {
+    try {
+      DocumentSnapshot routeSnapshot =
+      await routeCollection.doc(routeId).get();
+
+      if (routeSnapshot.exists) {
+        return routeSnapshot.data() as Map<String, dynamic>;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching route details: $e");
+      return null;
+    }
+  }
+
 }
