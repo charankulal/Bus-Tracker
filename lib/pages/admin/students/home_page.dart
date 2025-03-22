@@ -1,4 +1,5 @@
 import 'package:bus_tracking_app/pages/admin/students/add_student_page.dart';
+import 'package:bus_tracking_app/pages/admin/students/edit_student_page.dart';
 import 'package:bus_tracking_app/services/admin/routes.dart';
 import 'package:bus_tracking_app/services/admin/students.dart';
 import 'package:flutter/material.dart';
@@ -194,7 +195,10 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    // Handle Edit Student
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => EditStudentPage(studentId: student['studentId'])),
+                                    );
                                   },
                                   icon: Icon(Icons.edit, color: Colors.white),
                                   label: Text(

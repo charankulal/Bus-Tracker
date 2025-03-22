@@ -25,4 +25,24 @@ class StudentsDatabaseServices {
       return {"routeId": doc.id, "route_name": doc["route_name"]};
     }).toList();
   }
+
+  Future<Map<String, dynamic>?> getStudentById(String studentId) async {
+    try {
+      DocumentSnapshot routeSnapshot =
+      await studentCollection.doc(studentId).get();
+
+      if (routeSnapshot.exists) {
+        return routeSnapshot.data() as Map<String, dynamic>;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching student details: $e");
+      return null;
+    }
+  }
+
+  Future updateStudent(String id, Map<String, dynamic> updateInfo) async {
+    return await studentCollection.doc(id).update(updateInfo);
+  }
 }
