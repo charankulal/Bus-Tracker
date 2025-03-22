@@ -2,6 +2,8 @@ import 'package:bus_tracking_app/pages/admin/buses/add_bus_page.dart';
 import 'package:bus_tracking_app/services/admin/bus.dart';
 import 'package:flutter/material.dart';
 
+import '../../../services/admin/driver.dart';
+
 class AdminBusHomePage extends StatefulWidget {
   @override
   _AdminBusHomePageState createState() => _AdminBusHomePageState();
@@ -101,9 +103,73 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                                 ),
                               ),
                               SizedBox(height: 5),
-                              Text("Route:"),
-                              Text("Driver:"),
-                              Text("Phone: "),
+                              FutureBuilder(
+                                future: BusDatabaseMethods()
+                                    .getRouteNameByBusId(busData["busId"]),
+                                builder: (
+                                    context,
+                                    AsyncSnapshot<String?> snapshot,
+                                    ) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Text(
+                                      "Route: Loading...",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ); // Show loading text
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                      "Route: Error",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ); // Show error text
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data == null) {
+                                    return Text(
+                                      "Route: Not Assigned",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                      ),
+                                    ); // Show when no route is assigned
+                                  } else {
+                                    return Text(
+                                      "Route: ${snapshot.data}",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ); // Display fetched route name
+                                  }
+                                },
+                              ),
+                              FutureBuilder(
+                                future: BusDatabaseMethods().getDriverDetailsByBusId(busData["busId"]),
+                                builder: (context, AsyncSnapshot<Map<String, String?>?> snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Text("Loading driver details...");
+                                  } else if (snapshot.hasError || snapshot.data == null) {
+                                    return Text("Driver details not found", style: TextStyle(color: Colors.red));
+                                  } else {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Driver: ${snapshot.data!['name'] ?? 'N/A'}",
+                                            style: TextStyle(fontWeight: FontWeight.bold)),
+                                        Text("Phone: ${snapshot.data!['phone'] ?? 'N/A'}"),
+                                      ],
+                                    );
+                                  }
+                                },
+                              ),
+
                               SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment:
