@@ -129,6 +129,7 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
                             ),
                             SizedBox(height: 4),
                             Text("Parent's Phone: ${student["phone"]}"),
+                            Text("Password: ${student["password"]}"),
                             FutureBuilder(
                               future: RoutesDatabaseService().getRouteById(student["route"]), // Call the function
                               builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
