@@ -1,7 +1,9 @@
+import 'package:bus_tracking_app/constants/secrets.dart';
 import 'package:bus_tracking_app/services/admin/bus.dart';
 import 'package:bus_tracking_app/services/admin/driver.dart';
 import 'package:bus_tracking_app/services/admin/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
 
 class AddRoutePage extends StatefulWidget {
   @override
@@ -12,7 +14,8 @@ class _AddRoutePageState extends State<AddRoutePage> {
   final TextEditingController _routeNameController = TextEditingController();
   final TextEditingController _startLocationController = TextEditingController();
   final TextEditingController _endLocationController = TextEditingController();
-
+  Map<String, double>? _startLocation;
+  Map<String, double>? _endLocation;
   String? _selectedBusId;
   String? _selectedDriverId;
   List<Map<String, dynamic>> _driversList = [];
@@ -62,7 +65,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              "Failed to add driver details: ${error.toString()}",
+              "Failed to add route details: ${error.toString()}",
             ),
             duration: Duration(seconds: 1),
           ),
@@ -91,22 +94,50 @@ class _AddRoutePageState extends State<AddRoutePage> {
                 decoration: InputDecoration(labelText: "Route Name", border: OutlineInputBorder()),
               ),
               SizedBox(height: 10),
-              TextField(
-                controller: _startLocationController,
-                decoration: InputDecoration(labelText: "Start Location", border: OutlineInputBorder()),
+              GooglePlaceAutoCompleteTextField(
+                textEditingController: _startLocationController,
+                googleAPIKey: google_api_key,
+                inputDecoration: InputDecoration(labelText: "Start Location", border: OutlineInputBorder()),
+                debounceTime: 600,
+                getPlaceDetailWithLatLng: (placeDetail) {
+                  setState(() {
+                    _startLocation = {
+                      "latitude": double.tryParse(placeDetail.lat ?? "0") ?? 0.0,
+                      "longitude": double.tryParse(placeDetail.lng ?? "0") ?? 0.0,
+                    };
+                  });
+                },
               ),
+              // TextField(
+              //   controller: _startLocationController,
+              //   decoration: InputDecoration(labelText: "Start Location", border: OutlineInputBorder()),
+              // ),
               SizedBox(height: 10),
-              TextField(
-                controller: _endLocationController,
-                decoration: InputDecoration(labelText: "End Location", border: OutlineInputBorder()),
+              GooglePlaceAutoCompleteTextField(
+                textEditingController: _endLocationController,
+                googleAPIKey: google_api_key,
+                inputDecoration: InputDecoration(labelText: "End Location", border: OutlineInputBorder()),
+                debounceTime: 600,
+                getPlaceDetailWithLatLng: (placeDetail) {
+                  setState(() {
+                    _endLocation = {
+                      "latitude": double.tryParse(placeDetail.lat ?? "0") ?? 0.0,
+                      "longitude": double.tryParse(placeDetail.lng ?? "0") ?? 0.0,
+                    };
+                  });
+                },
               ),
+              // TextField(
+              //   controller: _endLocationController,
+              //   decoration: InputDecoration(labelText: "End Location", border: OutlineInputBorder()),
+              // ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 value: _selectedBusId,
-                items: _busList.map((driver) {
+                items: _busList.map((bus) {
                   return DropdownMenuItem<String>(
-                    value: driver["busId"], // Use driver ID as value
-                    child: Text(driver["bus_number"]), // Show driver name in UI
+                    value: bus["busId"], // Use driver ID as value
+                    child: Text(bus["bus_number"]), // Show driver name in UI
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _selectedBusId = value),
