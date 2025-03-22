@@ -1,3 +1,4 @@
+import 'package:bus_tracking_app/constants/utilities.dart';
 import 'package:flutter/material.dart';
 
 class ParentHomeScreen extends StatefulWidget {
@@ -54,11 +55,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                       children: [
                         Icon(Icons.calendar_today, color: Colors.black),
                         SizedBox(width: 5),
-                        Text('05/10', style: TextStyle(color: Colors.black)),
-                        SizedBox(width: 10),
-                        Icon(Icons.location_on, color: Colors.black),
-                        SizedBox(width: 5),
-                        Text('Ujire', style: TextStyle(color: Colors.black)),
+                        Text(dayMonth, style: TextStyle(color: Colors.black)),
                       ],
                     ),
                     SizedBox(height: 10),

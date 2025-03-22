@@ -4,6 +4,8 @@ import 'package:bus_tracking_app/pages/parents/home_page.dart';
 import 'package:bus_tracking_app/services/login/admin_login.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/utilities.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -70,12 +72,8 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
               children: [
                 Icon(Icons.calendar_today, color: Colors.black),
                 SizedBox(width: 5),
-                Text('05/10', style: TextStyle(color: Colors.black)),
-                SizedBox(width: 10),
-                Icon(Icons.location_on, color: Colors.black),
-                SizedBox(width: 5),
-                Text('Ujire', style: TextStyle(color: Colors.black)),
-              ],
+                Text(dayMonth, style: TextStyle(color: Colors.black)),
+            ]
 
             ),
             SizedBox(height: 40),

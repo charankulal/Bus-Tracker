@@ -1,3 +1,4 @@
+import 'package:bus_tracking_app/constants/utilities.dart';
 import 'package:flutter/material.dart';
 
 class DriverHomeScreen extends StatefulWidget {
@@ -6,7 +7,7 @@ class DriverHomeScreen extends StatefulWidget {
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
-  String _selectedLanguage = 'English';
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +60,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   children: [
                     Icon(Icons.calendar_today, color: Colors.black),
                     SizedBox(width: 5),
-                    Text('05/10', style: TextStyle(color: Colors.black)),
-                    SizedBox(width: 10),
-                    Icon(Icons.location_on, color: Colors.black),
-                    SizedBox(width: 5),
-                    Text('Ujire', style: TextStyle(color: Colors.black)),
+                    Text(dayMonth, style: TextStyle(color: Colors.black)),
                   ],
                 ),
                 SizedBox(height: 10),

@@ -1,3 +1,4 @@
+import 'package:bus_tracking_app/constants/utilities.dart';
 import 'package:bus_tracking_app/pages/admin/buses/home_page.dart';
 import 'package:bus_tracking_app/pages/admin/drivers/home_page.dart';
 import 'package:bus_tracking_app/pages/admin/routes/home_page.dart';
@@ -5,9 +6,11 @@ import 'package:bus_tracking_app/pages/admin/students/home_page.dart';
 import 'package:bus_tracking_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
+
 class AdminHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Column(
         children: [
@@ -44,15 +47,7 @@ class AdminHomeScreen extends StatelessWidget {
                   children: [
                     Icon(Icons.calendar_today, color: Colors.black),
                     SizedBox(width: 5),
-                    Text('05/10', style: TextStyle(color: Colors.black)),
-                    SizedBox(width: 10),
-                    Icon(Icons.cloud, color: Colors.black),
-                    SizedBox(width: 5),
-                    Text('26°C', style: TextStyle(color: Colors.black)),
-                    SizedBox(width: 10),
-                    Icon(Icons.location_on, color: Colors.black),
-                    SizedBox(width: 5),
-                    Text('Mangalore', style: TextStyle(color: Colors.black)),
+                    Text(dayMonth, style: TextStyle(color: Colors.black)),
                   ],
                 ),
               ],
