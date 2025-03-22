@@ -147,28 +147,41 @@ class _AddRoutePageState extends State<AddRoutePage> {
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value: _selectedBusId,
-                items: _busList.map((bus) {
-                  return DropdownMenuItem<String>(
-                    value: bus["busId"], // Use driver ID as value
-                    child: Text(bus["bus_number"]), // Show driver name in UI
-                  );
-                }).toList(),
+                value:  _selectedBusId,
+                items: [
+                  DropdownMenuItem<String>(
+                    value: 'qwerty',
+                    child: Text("Select Bus", style: TextStyle(color: Colors.black)),
+                  ),
+                  ..._busList.map((bus) {
+                    return DropdownMenuItem<String>(
+                      value: bus["busId"],
+                      child: Text(bus["bus_number"]),
+                    );
+                  }).toList(),
+                ],
                 onChanged: (value) => setState(() => _selectedBusId = value),
-                decoration: InputDecoration(labelText: "Select Bus", border: OutlineInputBorder()),
+                decoration: InputDecoration(border: OutlineInputBorder()),
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 value: _selectedDriverId,
-                items: _driversList.map((driver) {
-                  return DropdownMenuItem<String>(
-                    value: driver["driverId"], // Use driver ID as value
-                    child: Text(driver["name"]), // Show driver name in UI
-                  );
-                }).toList(),
+                items: [
+                  DropdownMenuItem<String>(
+                    value: 'qwerty',
+                    child: Text("Select Driver", style: TextStyle(color: Colors.black)),
+                  ),
+                  ..._driversList.map((driver) {
+                    return DropdownMenuItem<String>(
+                      value: driver["driverId"],
+                      child: Text(driver["name"]),
+                    );
+                  }).toList(),
+                ],
                 onChanged: (value) => setState(() => _selectedDriverId = value),
-                decoration: InputDecoration(labelText: "Select Driver", border: OutlineInputBorder()),
+                decoration: InputDecoration(border: OutlineInputBorder()),
               ),
+
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
