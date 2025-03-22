@@ -48,5 +48,29 @@ class BusDatabaseMethods {
       return "Error";
     }
   }
+  Future<List<Map<String, dynamic>>> getUnassociatedBuses() async {
+    try {
+      QuerySnapshot busSnapshot = await FirebaseFirestore.instance.collection("bus").get();
+      List<Map<String, dynamic>> allBuses = busSnapshot.docs.map((doc) {
+        return {
+          "busId": doc.id,
+          "bus_number": doc["bus_number"],
+        };
+      }).toList();
 
+      QuerySnapshot routeSnapshot = await FirebaseFirestore.instance.collection("route").get();
+      List<String> assignedBusIds = routeSnapshot.docs
+          .map((doc) => doc["busId"] as String)
+          .toList();
+
+      List<Map<String, dynamic>> unassociatedBuses = allBuses
+          .where((bus) => !assignedBusIds.contains(bus["busId"]))
+          .toList();
+
+      return unassociatedBuses;
+    } catch (e) {
+      print("Error fetching unassociated buses: $e");
+      return [];
+    }
+  }
 }

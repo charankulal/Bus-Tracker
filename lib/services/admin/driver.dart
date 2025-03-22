@@ -63,5 +63,30 @@ class DriverDatabaseServices {
       return "Error";
     }
   }
+  Future<List<Map<String, dynamic>>> getUnassociatedDrivers() async {
+    try {
+      QuerySnapshot driverSnapshot = await FirebaseFirestore.instance.collection("driver").get();
+      List<Map<String, dynamic>> allDrivers = driverSnapshot.docs.map((doc) {
+        return {
+          "driverId": doc.id,
+          "name": doc["name"],
+        };
+      }).toList();
+
+      QuerySnapshot routeSnapshot = await FirebaseFirestore.instance.collection("route").get();
+      List<String> assignDriverIds = routeSnapshot.docs
+          .map((doc) => doc["driverId"] as String)
+          .toList();
+
+      List<Map<String, dynamic>> unassociatedDrivers = allDrivers
+          .where((driver) => !assignDriverIds.contains(driver["driverId"]))
+          .toList();
+
+      return unassociatedDrivers;
+    } catch (e) {
+      print("Error fetching unassociated drivers: $e");
+      return [];
+    }
+  }
 
 }

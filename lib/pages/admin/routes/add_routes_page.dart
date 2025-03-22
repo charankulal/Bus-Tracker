@@ -33,11 +33,11 @@ class _AddRoutePageState extends State<AddRoutePage> {
   }
 
   void fetchDrivers() async {
-    _driversList = await DriverDatabaseServices().getAllDriversIDName();
+    _driversList = await DriverDatabaseServices().getUnassociatedDrivers();
     setState(() {});
   }
   void fetchBuses() async {
-    _busList = await BusDatabaseMethods().getAllBusIDNumber();
+    _busList = await BusDatabaseMethods().getUnassociatedBuses();
     setState(() {});
   }
 
@@ -147,7 +147,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value:  _selectedBusId,
+                value:  _selectedBusId??'qwerty',
                 items: [
                   DropdownMenuItem<String>(
                     value: 'qwerty',
@@ -165,7 +165,7 @@ class _AddRoutePageState extends State<AddRoutePage> {
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value: _selectedDriverId,
+                value: _selectedDriverId??"qwerty",
                 items: [
                   DropdownMenuItem<String>(
                     value: 'qwerty',

@@ -30,26 +30,43 @@ class _EditRoutePageState extends State<EditRoutePage> {
   @override
   void initState() {
     super.initState();
+    _fetchRouteDetails();
     fetchDrivers();
     fetchBuses();
-    _fetchRouteDetails();
   }
 
   void _fetchRouteDetails() async {
     var routeData = await RoutesDatabaseService().getRouteById(widget.routeId);
-    _routeNameController.text = routeData?["route_name"];
-    _startLocationController.text = routeData?["start_loc_name"];
-    _endLocationController.text = routeData?["end_loc_name"];
-    _selectedBusId = routeData?["busId"];
-    _selectedDriverId = routeData?["driverId"];
+    setState(() {
+      _routeNameController.text = routeData?["route_name"] ?? "";
+      _startLocationController.text = routeData?["start_loc_name"] ?? "";
+      _endLocationController.text = routeData?["end_loc_name"] ?? "";
+      _selectedBusId = routeData?["busId"]??"";
+      _selectedDriverId = routeData?["driverId"]??"";
+    });
   }
 
   void fetchDrivers() async {
-    _driversList = await DriverDatabaseServices().getAllDriversIDName();
+    _driversList = await DriverDatabaseServices().getUnassociatedDrivers();
+
+    if (_selectedDriverId != null) {
+      var _selectedDriver = await DriverDatabaseServices().getDriverNameById(_selectedDriverId!);
+      Map<String, dynamic> selectedDriverInfo = {"driverId": _selectedDriverId, "name": _selectedDriver};
+      _driversList.add(selectedDriverInfo);
+    }
+
     setState(() {});
   }
+
   void fetchBuses() async {
-    _busList = await BusDatabaseMethods().getAllBusIDNumber();
+    _busList = await BusDatabaseMethods().getUnassociatedBuses();
+
+    if (_selectedBusId != null) {
+      var _selectedBus = await BusDatabaseMethods().getBusNumberById(_selectedBusId!);
+      Map<String, dynamic> selectedBusInfo = {"busId": _selectedBusId, "bus_number": _selectedBus};
+      _busList.add(selectedBusInfo);
+    }
+
     setState(() {});
   }
 
@@ -61,12 +78,12 @@ class _EditRoutePageState extends State<EditRoutePage> {
         _selectedDriverId != null) {
       Map<String, dynamic> _routeInfo = {
         "route_name": _routeNameController.text,
-        "start_loc_name":_startLocationController.text,
-        "end_loc_name":_endLocationController.text,
+        "start_loc_name": _startLocationController.text,
+        "end_loc_name": _endLocationController.text,
         "start_location": _startLocation,
-        "end_location":_endLocation,
-        "busId":_selectedBusId,
-        "driverId":_selectedDriverId,
+        "end_location": _endLocation,
+        "busId": _selectedBusId,
+        "driverId": _selectedDriverId,
       };
       await RoutesDatabaseService()
           .updateRoute(widget.routeId, _routeInfo)
@@ -78,19 +95,17 @@ class _EditRoutePageState extends State<EditRoutePage> {
             duration: Duration(seconds: 1),
           ),
         );
-      })
-          .catchError((error) {
+      }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              "Failed to update route details: ${error.toString()}",
-            ),
+            content: Text("Failed to update route details: ${error.toString()}"),
             duration: Duration(seconds: 1),
           ),
         );
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all fields")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please fill all fields")));
     }
   }
 
@@ -109,21 +124,24 @@ class _EditRoutePageState extends State<EditRoutePage> {
             children: [
               TextField(
                 controller: _routeNameController,
-                decoration: InputDecoration(labelText: "Route Name", border: OutlineInputBorder()),
+                decoration: InputDecoration(
+                  labelText: "Route Name",
+                  border: OutlineInputBorder(),
+                ),
               ),
               SizedBox(height: 10),
               GooglePlaceAutoCompleteTextField(
                 textEditingController: _startLocationController,
                 googleAPIKey: google_api_key_places,
                 focusNode: _startLocationFocusNode,
-                inputDecoration: InputDecoration(labelText: "Start Location", border: OutlineInputBorder()),
+                inputDecoration: InputDecoration(
+                  labelText: "Start Location",
+                  border: OutlineInputBorder(),
+                ),
                 debounceTime: 600,
                 itemClick: (Prediction prediction) {
                   _startLocationController.text = prediction.description ?? "";
-                  _startLocationController.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _startLocationController.text.length),
-                  );
-                  FocusScope.of(context).requestFocus(_endLocationFocusNode); // Move focus to end location
+                  FocusScope.of(context).requestFocus(_endLocationFocusNode);
                 },
                 getPlaceDetailWithLatLng: (placeDetail) {
                   setState(() {
@@ -139,14 +157,14 @@ class _EditRoutePageState extends State<EditRoutePage> {
                 textEditingController: _endLocationController,
                 googleAPIKey: google_api_key_places,
                 focusNode: _endLocationFocusNode,
-                inputDecoration: InputDecoration(labelText: "End Location", border: OutlineInputBorder()),
+                inputDecoration: InputDecoration(
+                  labelText: "End Location",
+                  border: OutlineInputBorder(),
+                ),
                 debounceTime: 600,
                 itemClick: (Prediction prediction) {
                   _endLocationController.text = prediction.description ?? "";
-                  _endLocationController.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _endLocationController.text.length),
-                  );
-                  FocusScope.of(context).unfocus(); // Remove focus after selecting end location
+                  FocusScope.of(context).unfocus();
                 },
                 getPlaceDetailWithLatLng: (placeDetail) {
                   setState(() {
@@ -159,7 +177,7 @@ class _EditRoutePageState extends State<EditRoutePage> {
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value:  _selectedBusId,
+                value: _busList.any((busList) => busList["busId"] == _selectedBusId) ? _selectedBusId : null,
                 items: [
                   DropdownMenuItem<String>(
                     value: 'qwerty',
@@ -177,7 +195,7 @@ class _EditRoutePageState extends State<EditRoutePage> {
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value: _selectedDriverId,
+                value: _driversList.any((driver) => driver["driverId"] == _selectedDriverId) ? _selectedDriverId : null,
                 items: [
                   DropdownMenuItem<String>(
                     value: 'qwerty',
@@ -193,7 +211,6 @@ class _EditRoutePageState extends State<EditRoutePage> {
                 onChanged: (value) => setState(() => _selectedDriverId = value),
                 decoration: InputDecoration(border: OutlineInputBorder()),
               ),
-
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -204,9 +221,7 @@ class _EditRoutePageState extends State<EditRoutePage> {
                       padding: EdgeInsets.symmetric(vertical: 7, horizontal: 25),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    onPressed: () {
-                      _updateRoute();
-                    },
+                    onPressed: _updateRoute,
                     child: Text("Update", style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
                   ElevatedButton(
