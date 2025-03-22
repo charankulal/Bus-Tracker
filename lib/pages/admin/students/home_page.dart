@@ -25,6 +25,27 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
     _loadDrivers();
   }
 
+  void _deleteStudent(BuildContext context, String id) async {
+    await StudentsDatabaseServices()
+        .deleteStudent(id)
+        .then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Student is Deleted"),
+          duration: Durations.short4,
+        ),
+      );
+    })
+        .catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to delete student: ${error.toString()}"),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,7 +239,10 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    // Handle Delete Student
+                                    _deleteStudent(
+                                      context,
+                                      student["studentId"]!,
+                                    );
                                   },
                                   icon: Icon(Icons.delete, color: Colors.white),
                                   label: Text(

@@ -45,4 +45,9 @@ class StudentsDatabaseServices {
   Future updateStudent(String id, Map<String, dynamic> updateInfo) async {
     return await studentCollection.doc(id).update(updateInfo);
   }
+
+  Future deleteStudent(String id) async {
+    return await studentCollection.doc(id).delete();
+  }
+
 }
