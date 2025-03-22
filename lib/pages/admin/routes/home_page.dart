@@ -31,10 +31,25 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
     _loadRoutes();
   }
 
-  void _deleteRoute(int index) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Id ${index}"), duration: Duration(seconds: 1)),
-    );
+  void _deleteRoute(BuildContext context, String id) async{
+    await RoutesDatabaseService()
+        .deleteRoute(id)
+        .then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Route is deleted"),
+          duration: Durations.short4,
+        ),
+      );
+    })
+        .catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to delete route: ${error.toString()}"),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    });
   }
 
   void _addRoute() {
@@ -189,7 +204,7 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
                                     ),
-                                    onPressed: () => _deleteRoute(index),
+                                    onPressed: () => _deleteRoute(context, route['routeId']),
                                     icon: Icon(
                                       Icons.delete,
                                       color: Colors.white,

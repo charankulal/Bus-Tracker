@@ -83,7 +83,7 @@ class _EditRoutePageState extends State<EditRoutePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              "Failed to add route details: ${error.toString()}",
+              "Failed to update route details: ${error.toString()}",
             ),
             duration: Duration(seconds: 1),
           ),

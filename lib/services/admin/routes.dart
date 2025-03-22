@@ -37,4 +37,8 @@ class RoutesDatabaseService{
     }
   }
 
+  Future deleteRoute(String routeId) async {
+    return await routeCollection.doc(routeId).delete();
+  }
+
 }
