@@ -43,6 +43,8 @@ class _EditRoutePageState extends State<EditRoutePage> {
       _endLocationController.text = routeData?["end_loc_name"] ?? "";
       _selectedBusId = routeData?["busId"]??"";
       _selectedDriverId = routeData?["driverId"]??"";
+      _startLocation = routeData?["start_location"];
+      _endLocation = routeData?["end_location"];
     });
   }
 

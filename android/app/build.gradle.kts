@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "com.example.bus_tracking_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     dependencies{
         implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
