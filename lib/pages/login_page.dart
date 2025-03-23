@@ -2,6 +2,7 @@ import 'package:bus_tracking_app/pages/admin/home_page.dart';
 import 'package:bus_tracking_app/pages/drivers/home_page.dart';
 import 'package:bus_tracking_app/pages/parents/home_page.dart';
 import 'package:bus_tracking_app/services/login/admin_login.dart';
+import 'package:bus_tracking_app/services/login/driver_login.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/utilities.dart';
@@ -16,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   bool _isKeyboardOpen = false;
   TextEditingController _childNameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _driverPhoneController = TextEditingController();
 
   @override
   void initState() {
@@ -140,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
-                  controller: _childNameController,
+                  controller: _driverPhoneController,
                   decoration: InputDecoration(
                     labelText: 'Phone Number',
                     border: OutlineInputBorder(),
@@ -189,11 +191,37 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                     MaterialPageRoute(builder: (context) => ParentHomeScreen()),
                   );
                 }
-                if(_selectedRole=='Driver'){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => DriverHomeScreen()),
-                  );
+                if(_selectedRole=='Driver') {
+                  if (_passwordController.text.isEmpty ||
+                      _driverPhoneController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Phone or Password cannot be empty!"),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    return;
+                  }
+                  String enteredPassword = _passwordController.text.trim();
+                  String enteredPhone = _driverPhoneController.text.trim();
+                  final driverId = await DriverLoginDatabaseServices()
+                      .authenticateDriver(enteredPhone, enteredPassword);
+                  if (driverId == null || driverId.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Invalid Credentials!"),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    return;
+                  }
+                  else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DriverHomeScreen(driverId: driverId)),
+                    );
+                  }
                 }
                 if (_selectedRole == 'Admin') {
                   if (_passwordController.text.isEmpty) {

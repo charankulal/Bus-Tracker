@@ -1,13 +1,35 @@
 import 'package:bus_tracking_app/constants/utilities.dart';
+import 'package:bus_tracking_app/services/drivers/driver.dart';
 import 'package:flutter/material.dart';
 
 class DriverHomeScreen extends StatefulWidget {
+  final String driverId;
+  DriverHomeScreen({required this.driverId});
   @override
   _DriverHomeScreenState createState() => _DriverHomeScreenState();
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
+  Map<String, dynamic>? routeData = {};
+  Map<String, dynamic>? busData = {};
+  _loadAssociatedRoute(String driverId) async {
+    routeData = await DriverHomePageDatabaseServices().getRouteByDriverId(
+      driverId,
+    );
 
+    if (routeData != null) {
+      busData = await DriverHomePageDatabaseServices().getBusByBusId(
+        routeData!['busId'],
+      );
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAssociatedRoute(widget.driverId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +48,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     Text(
                       'SmartBus',
                       style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                     CircleAvatar(
                       radius: 30,
@@ -38,20 +61,28 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  'Bus number : XXX2457',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                  'Bus number : ${busData?['bus_number']}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
                       onPressed: () {},
-                      child: Text('Sidhavana'),
+                      child: Text(
+                        routeData!['start_loc_name'].toString().split(',')[0],
+                      ),
                     ),
                     Icon(Icons.swap_horiz),
                     ElevatedButton(
                       onPressed: () {},
-                      child: Text('Karkala'),
+                      child: Text(
+                        routeData!['end_loc_name'].toString().split(',')[0],
+                      ),
                     ),
                   ],
                 ),
@@ -72,21 +103,33 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.lightGreen.shade400,
-                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 12,
+                          ),
                         ),
-                        child: Text('Start Trip', style: TextStyle(color: Colors.black)),
+                        child: Text(
+                          'Start Trip',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
-                      SizedBox( width: MediaQuery.of(context).size.width * 0.15,),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.15),
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red.shade400,
-                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 12,
+                          ),
                         ),
-                        child: Text('End Trip', style: TextStyle(color: Colors.black)),
+                        child: Text(
+                          'End Trip',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ],
-                  )
+                  ),
                 ),
               ],
             ),
@@ -96,11 +139,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               width: double.infinity,
               color: Colors.grey[300],
               child: Center(
-                child: Icon(
-                  Icons.map,
-                  size: 100,
-                  color: Colors.black54,
-                ),
+                child: Icon(Icons.map, size: 100, color: Colors.black54),
               ),
             ),
           ),
