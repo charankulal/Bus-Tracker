@@ -110,6 +110,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     isTracking = false;
     _positionStream?.cancel();
     _timer?.cancel();
+    setState(() {
+
+    });
   }
 
   @override
