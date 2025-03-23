@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bus_tracking_app/constants/secrets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:bus_tracking_app/constants/utilities.dart';
@@ -16,7 +17,7 @@ class DriverHomeScreen extends StatefulWidget {
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
-  GoogleMapController? _mapController;
+  final Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
   Position? _currentPosition;
@@ -25,13 +26,18 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   StreamSubscription<Position>? _positionStream;
   bool isTracking = false;
   Timer? _timer;
+  static const LatLng sourceLocation = LatLng(12.9954759, 75.3289337);
+  static const LatLng endLocation = LatLng(12.9496336, 75.1870479);
+  List<LatLng> polylineCoordinates =[];
 
   @override
   void initState() {
     super.initState();
     _loadAssociatedRoute(widget.driverId);
     _checkPermissions();
+    getPolyPoints();
   }
+
   Future<void> _checkPermissions() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -42,48 +48,58 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     }
   }
 
-
   _loadAssociatedRoute(String driverId) async {
-    routeData = await DriverHomePageDatabaseServices().getRouteByDriverId(driverId);
+    routeData = await DriverHomePageDatabaseServices().getRouteByDriverId(
+      driverId,
+    );
     if (routeData != null) {
-      busData = await DriverHomePageDatabaseServices().getBusByBusId(routeData!['busId']);
-      _plotRoute();
+      busData = await DriverHomePageDatabaseServices().getBusByBusId(
+        routeData!['busId'],
+      );
     }
     setState(() {});
   }
 
-  _plotRoute() {
-    if (routeData != null) {
-      LatLng start = LatLng(routeData?['start_location']?['latitude'], routeData?['start_location']?['longitude']);
-      LatLng end = LatLng(routeData?['end_location']?['latitude'], routeData?['end_location']?['longitude']);
+  void getPolyPoints() async {
+    PolylinePoints polylinePoints = PolylinePoints();
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      googleApiKey: google_api_key_places,
+      request: PolylineRequest(
+        origin: PointLatLng(sourceLocation.latitude, sourceLocation.longitude),
+        destination: PointLatLng(endLocation.latitude, endLocation.longitude),
+        mode: TravelMode.driving,
+      ),
+    );
 
-      _markers.add(Marker(markerId: MarkerId("start"), position: start, infoWindow: InfoWindow(title: "Start Location")));
-      _markers.add(Marker(markerId: MarkerId("end"), position: end, infoWindow: InfoWindow(title: "End Location")));
+    if(result.points.isNotEmpty){
+      result.points.forEach((PointLatLng point)=> polylineCoordinates.add(LatLng(point.latitude, point.longitude)));
+      setState(() {
 
-      _polylines.add(Polyline(
-        polylineId: PolylineId("route"),
-        points: [start, end],
-        color: Colors.blue,
-        width: 5,
-      ));
-
-      setState(() {});
+      });
     }
+
   }
 
   _startTrip() async {
     isTracking = true;
     _positionStream = Geolocator.getPositionStream(
-      locationSettings: LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 10),
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      ),
     ).listen((Position position) {
       setState(() {
         _currentPosition = position;
-        _markers.add(Marker(
-          markerId: MarkerId("driver"),
-          position: LatLng(position.latitude, position.longitude),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-          infoWindow: InfoWindow(title: "Driver's Current Location"),
-        ));
+        _markers.add(
+          Marker(
+            markerId: MarkerId("driver"),
+            position: LatLng(position.latitude, position.longitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueRed,
+            ),
+            infoWindow: InfoWindow(title: "Driver's Current Location"),
+          ),
+        );
       });
       _sendLocationToFirestore(position);
     });
@@ -110,9 +126,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     isTracking = false;
     _positionStream?.cancel();
     _timer?.cancel();
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -138,27 +152,46 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   children: [
                     Text(
                       'SmartBus',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                    CircleAvatar(radius: 30, foregroundImage: AssetImage('assets/logo.jpg')),
+                    CircleAvatar(
+                      radius: 30,
+                      foregroundImage: AssetImage('assets/logo.jpg'),
+                    ),
                   ],
                 ),
                 SizedBox(height: 5),
                 Text(
                   'Bus number : ${busData?['bus_number'] ?? 'N/A'}',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
                       onPressed: () {},
-                      child: Text(routeData?['start_loc_name']?.toString().split(',')[0] ?? 'Start'),
+                      child: Text(
+                        routeData?['start_loc_name']?.toString().split(
+                              ',',
+                            )[0] ??
+                            'Start',
+                      ),
                     ),
                     Icon(Icons.swap_horiz),
                     ElevatedButton(
                       onPressed: () {},
-                      child: Text(routeData?['end_loc_name']?.toString().split(',')[0] ?? 'End'),
+                      child: Text(
+                        routeData?['end_loc_name']?.toString().split(',')[0] ??
+                            'End',
+                      ),
                     ),
                   ],
                 ),
@@ -170,16 +203,24 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               height: MediaQuery.of(context).size.height * 0.7, // Adjust height
               child: GoogleMap(
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(0.0, 0.0), // Temporary default location
-                  zoom: 14,
+                  target: sourceLocation,
+                  zoom: 10,
                 ),
-                onMapCreated: (GoogleMapController controller) {
-                  setState(() {
-                    _mapController = controller;
-                  });
+                polylines: {
+                  Polyline(polylineId: PolylineId("routes"),
+                    points: polylineCoordinates
+                  )
                 },
-                markers: _markers,
-                polylines: _polylines,
+                markers: {
+                  Marker(
+                    markerId: MarkerId("source"),
+                    position: sourceLocation,
+                  ),
+                  Marker(
+                    markerId: MarkerId("destination"),
+                    position: endLocation,
+                  ),
+                },
               ),
             ),
           ),
@@ -190,7 +231,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               children: [
                 ElevatedButton(
                   onPressed: isTracking ? null : _startTrip,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
                   child: Text('Start Trip'),
                 ),
                 ElevatedButton(
