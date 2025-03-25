@@ -44,7 +44,7 @@
             android:value="2" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBVYcCpnH-NBgbFjnOnJCBhWx9NdRFuTVQ"/>
+            android:value="AIzaSyCG9OKZYxA20WNyOdcYFnuvxAs5IuwRSFU"/>
         <meta-data android:name="flutter.renderer" android:value="opengl" />
 
     </application>

@@ -1,2 +1,2 @@
-var google_api_key_places = 'AIzaSyBVYcCpnH-NBgbFjnOnJCBhWx9NdRFuTVQ';
-var google_api_key_maps = 'AIzaSyB3OgvYzPniUXZ8gN5C56EoPG6B0CirWog';
+var google_api_key_places = 'AIzaSyCG9OKZYxA20WNyOdcYFnuvxAs5IuwRSFU';
+var google_api_key_maps = 'AIzaSyCG9OKZYxA20WNyOdcYFnuvxAs5IuwRSFU';
