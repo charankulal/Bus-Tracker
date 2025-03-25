@@ -27,8 +27,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   StreamSubscription<Position>? _positionStream;
   bool isTracking = false;
   Timer? _timer;
-  static const LatLng sourceLocation = LatLng(12.9954759, 75.3289337);
-  static const LatLng endLocation = LatLng(12.9496336, 75.1870479);
+  static LatLng sourceLocation = LatLng(0, 0);
+  static LatLng endLocation = LatLng(0, 0);
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
 
@@ -59,6 +59,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       busData = await DriverHomePageDatabaseServices().getBusByBusId(
         routeData!['busId'],
       );
+      sourceLocation = LatLng(routeData?["start_location"]?["latitude"] ?? 0.0, routeData?["start_location"]?["longitude"] ?? 0.0);
+      endLocation = LatLng(routeData?["end_location"]?["latitude"] ?? 0.0, routeData?["end_location"]?["longitude"] ?? 0.0);
     }
     setState(() {});
   }
