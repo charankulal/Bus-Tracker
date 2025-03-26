@@ -6,6 +6,7 @@ import 'package:bus_tracking_app/services/login/driver_login.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/utilities.dart';
+import '../services/login/parent_login.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -186,10 +187,36 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
               onPressed: () async {
 
                 if(_selectedRole=='Parent'){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ParentHomeScreen()),
-                  );
+                  if (_passwordController.text.isEmpty ||
+                      _parentPhoneController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Phone or Password cannot be empty!"),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    return;
+                  }
+                  String enteredPassword = _passwordController.text.trim();
+                  String enteredPhone = _parentPhoneController.text.trim();
+                  final studentId = await StudentLoginDatabaseServices()
+                      .authenticateParent(enteredPhone, enteredPassword);
+                  if (studentId == null || studentId.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Invalid Credentials!"),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    return;
+                  }
+                  else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ParentHomeScreen(studentId: studentId)),
+                    );
+                  }
                 }
                 if(_selectedRole=='Driver') {
                   if (_passwordController.text.isEmpty ||

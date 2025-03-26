@@ -2,6 +2,8 @@ import 'package:bus_tracking_app/constants/utilities.dart';
 import 'package:flutter/material.dart';
 
 class ParentHomeScreen extends StatefulWidget {
+  final String studentId;
+  ParentHomeScreen({required this.studentId});
   @override
   _ParentHomeScreenState createState() => _ParentHomeScreenState();
 }
