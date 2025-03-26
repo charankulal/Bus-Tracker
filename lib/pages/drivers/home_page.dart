@@ -83,16 +83,18 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
   _startTrip() async {
     isTracking = true;
-    LocationServices().sendLocation(widget.driverId, currentLocation!);
+
+    LocationServices().sendLocation(widget.driverId, currentLocation!, "Active");
     _timer = Timer.periodic(Duration(seconds: 30), (Timer t) {
       if (currentLocation != null) {
-        LocationServices().sendLocation(widget.driverId, currentLocation!);
+        LocationServices().sendLocation(widget.driverId, currentLocation!, "Active");
       }
     });
     setState(() { });
 }
 
   _endTrip() {
+    LocationServices().sendLocation(widget.driverId, currentLocation!, "Inactive");
     isTracking = false;
     _timer?.cancel();
     setState(() {});

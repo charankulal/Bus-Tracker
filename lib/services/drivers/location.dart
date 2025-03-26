@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 
 class LocationServices{
-  Future<void> sendLocation(String driverId, LocationData position) async {
+  Future<void> sendLocation(String driverId, LocationData position, String status) async {
     try {
       CollectionReference trackingRef =
       FirebaseFirestore.instance.collection('driver_tracking');
@@ -22,6 +22,7 @@ class LocationServices{
           'latitude': position.latitude,
           'longitude': position.longitude,
           'timestamp': FieldValue.serverTimestamp(),
+          'status': status,
         });
       } else {
         await trackingRef.add({
@@ -31,6 +32,7 @@ class LocationServices{
           'latitude': position.latitude,
           'longitude': position.longitude,
           'timestamp': FieldValue.serverTimestamp(),
+          'status': status,
         });
       }
     } catch (e) {
