@@ -3,9 +3,14 @@
     <uses-feature android:name="android.hardware.location.gps"
         tools:ignore="UnnecessaryRequiredFeature" />
     <uses-feature android:name="android.hardware.location.network"/>
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
     <application
         android:hardwareAccelerated="true"
         android:largeHeap="true"
@@ -14,6 +19,7 @@
         android:label="Bus Tracker"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -36,7 +42,10 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+
         </activity>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -47,6 +56,9 @@
             android:value="AIzaSyCG9OKZYxA20WNyOdcYFnuvxAs5IuwRSFU"/>
         <meta-data android:name="flutter.renderer" android:value="opengl" />
 
+
+
+
     </application>
 
     <!-- Required to query activities that can process text, see:
@@ -55,6 +67,10 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

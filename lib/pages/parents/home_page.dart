@@ -4,6 +4,7 @@ import 'package:bus_tracking_app/constants/utilities.dart';
 import 'package:bus_tracking_app/services/admin/driver.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../services/drivers/driver.dart';
 import '../../services/students/students.dart';
 
@@ -13,6 +14,22 @@ class ParentHomeScreen extends StatefulWidget {
   @override
   _ParentHomeScreenState createState() => _ParentHomeScreenState();
 }
+
+Future<void> makePhoneCall(String phoneNumber) async {
+  print(phoneNumber);
+
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: '+91$phoneNumber', // Correct placement of country code
+  );
+
+  if (await canLaunchUrl(launchUri)) {
+    await launchUrl(launchUri, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch $launchUri';
+  }
+}
+
 
 class _ParentHomeScreenState extends State<ParentHomeScreen> {
   Map<String, dynamic>? studentData;
@@ -234,7 +251,13 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red.shade400,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (driverPhone != null && driverPhone!.isNotEmpty) {
+                          makePhoneCall(driverPhone!);
+                        } else {
+                          print("Driver phone number is not available.");
+                        }
+                      },
                       child: Text(
                         'Call Driver',
                         style: TextStyle(color: Colors.black),
