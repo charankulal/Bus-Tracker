@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bus_tracking_app/constants/secrets.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:bus_tracking_app/services/drivers/location.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -80,22 +81,19 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     }
   }
 
-  _startTrip() async {}
-
-  // _sendLocationToFirestore(Position position) {
-  //   FirebaseFirestore.instance.collection('driver_tracking').add({
-  //     'driverId': widget.driverId,
-  //     'busId': routeData?['busId'],
-  //     'routeId': routeData?['routeId'],
-  //     'latitude': position.latitude,
-  //     'longitude': position.longitude,
-  //     'timestamp': FieldValue.serverTimestamp(),
-  //   });
-  // }
+  _startTrip() async {
+    isTracking = true;
+    LocationServices().sendLocation(widget.driverId, currentLocation!);
+    _timer = Timer.periodic(Duration(seconds: 30), (Timer t) {
+      if (currentLocation != null) {
+        LocationServices().sendLocation(widget.driverId, currentLocation!);
+      }
+    });
+    setState(() { });
+}
 
   _endTrip() {
     isTracking = false;
-    _positionStream?.cancel();
     _timer?.cancel();
     setState(() {});
   }
