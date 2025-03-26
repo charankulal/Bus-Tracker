@@ -15,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   String _selectedRole = 'Parent';
   bool _isKeyboardOpen = false;
-  TextEditingController _childNameController = TextEditingController();
+  TextEditingController _parentPhoneController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _driverPhoneController = TextEditingController();
 
@@ -116,9 +116,9 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
-                  controller: _childNameController,
+                  controller: _parentPhoneController,
                   decoration: InputDecoration(
-                    labelText: 'Name of Child',
+                    labelText: 'Phone Number',
                     border: OutlineInputBorder(),
                   ),
                 ),

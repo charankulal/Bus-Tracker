@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:bus_tracking_app/constants/secrets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:bus_tracking_app/constants/utilities.dart';
 import 'package:bus_tracking_app/services/drivers/driver.dart';
 import 'package:location/location.dart';
 
@@ -18,10 +17,6 @@ class DriverHomeScreen extends StatefulWidget {
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
-  final Completer<GoogleMapController> _controller = Completer();
-  Set<Marker> _markers = {};
-  Set<Polyline> _polylines = {};
-  Position? _currentPosition;
   Map<String, dynamic>? routeData;
   Map<String, dynamic>? busData;
   StreamSubscription<Position>? _positionStream;
@@ -87,16 +82,16 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
   _startTrip() async {}
 
-  _sendLocationToFirestore(Position position) {
-    FirebaseFirestore.instance.collection('driver_tracking').add({
-      'driverId': widget.driverId,
-      'busId': routeData?['busId'],
-      'routeId': routeData?['routeId'],
-      'latitude': position.latitude,
-      'longitude': position.longitude,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
-  }
+  // _sendLocationToFirestore(Position position) {
+  //   FirebaseFirestore.instance.collection('driver_tracking').add({
+  //     'driverId': widget.driverId,
+  //     'busId': routeData?['busId'],
+  //     'routeId': routeData?['routeId'],
+  //     'latitude': position.latitude,
+  //     'longitude': position.longitude,
+  //     'timestamp': FieldValue.serverTimestamp(),
+  //   });
+  // }
 
   _endTrip() {
     isTracking = false;
@@ -210,7 +205,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                         ),
                         polylines: {
                           Polyline(
-                            polylineId: PolylineId("routes"),
+                            polylineId: PolylineId("route"),
                             points: polylineCoordinates,
                           ),
                         },
