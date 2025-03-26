@@ -83,14 +83,12 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
     fetchAndLoadData();
     Timer.periodic(Duration(seconds: 30), (timer) {
       fetchDriverLocationStatus();
-
     });
   }
 
@@ -212,7 +210,9 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                                 Marker(
                                   markerId: const MarkerId("currentLocation"),
                                   position: currentLocation,
-                                    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue)
+                                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                                    BitmapDescriptor.hueBlue,
+                                  ),
                                 ),
                               },
                             ),
