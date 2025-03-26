@@ -16,12 +16,7 @@ class ParentHomeScreen extends StatefulWidget {
 }
 
 Future<void> makePhoneCall(String phoneNumber) async {
-  print(phoneNumber);
-
-  final Uri launchUri = Uri(
-    scheme: 'tel',
-    path: '+91$phoneNumber', // Correct placement of country code
-  );
+  final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
 
   if (await canLaunchUrl(launchUri)) {
     await launchUrl(launchUri, mode: LaunchMode.externalApplication);
@@ -29,7 +24,6 @@ Future<void> makePhoneCall(String phoneNumber) async {
     throw 'Could not launch $launchUri';
   }
 }
-
 
 class _ParentHomeScreenState extends State<ParentHomeScreen> {
   Map<String, dynamic>? studentData;
@@ -78,8 +72,6 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
       routeData!['driverId'],
     );
 
-    print("Fetched Tracking Data: $trackingData"); // Debugging
-
     if (trackingData != null) {
       if (trackingData?['status'] == "Active") {
         isDriverActive = true;
@@ -90,8 +82,6 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
             trackingData?['longitude'] ?? 0.0,
           );
         });
-
-        print("Updated Location: $currentLocation"); // Debugging
       } else {
         setState(() {
           isDriverActive = false;
@@ -255,7 +245,14 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                         if (driverPhone != null && driverPhone!.isNotEmpty) {
                           makePhoneCall(driverPhone!);
                         } else {
-                          print("Driver phone number is not available.");
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Driver Phone number is not available!",
+                              ),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
                         }
                       },
                       child: Text(
