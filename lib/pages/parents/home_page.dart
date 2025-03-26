@@ -1,5 +1,11 @@
+import 'dart:async';
+
 import 'package:bus_tracking_app/constants/utilities.dart';
+import 'package:bus_tracking_app/services/admin/driver.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../services/drivers/driver.dart';
+import '../../services/students/students.dart';
 
 class ParentHomeScreen extends StatefulWidget {
   final String studentId;
@@ -9,7 +15,89 @@ class ParentHomeScreen extends StatefulWidget {
 }
 
 class _ParentHomeScreenState extends State<ParentHomeScreen> {
-  bool _isExpanded = false;
+  Map<String, dynamic>? studentData;
+  Map<String, dynamic>? routeData;
+  Map<String, dynamic>? busData;
+  Map<String, dynamic>? trackingData;
+  static LatLng currentLocation = LatLng(0.0, 0.0);
+  String? driverName;
+  String? driverPhone;
+  bool? isDriverActive = false;
+
+  fetchStudents() async {
+    studentData = await ParentDatabaseServices().getStudentById(
+      widget.studentId,
+    );
+    setState(() {});
+  }
+
+  loadAssociatedRoute() async {
+    routeData = await ParentDatabaseServices().getRouteById(
+      studentData?['route'],
+    );
+    if (routeData != null) {
+      busData = await DriverHomePageDatabaseServices().getBusByBusId(
+        routeData!['busId'],
+      );
+      driverName = await DriverDatabaseServices().getDriverNameById(
+        routeData!['driverId'],
+      );
+      driverPhone = await DriverDatabaseServices().getDriverPhoneById(
+        routeData!['driverId'],
+      );
+      trackingData = await ParentDatabaseServices().getDriverLocation(
+        routeData!['driverId'],
+      );
+
+      await fetchDriverLocationStatus();
+    }
+    setState(() {});
+  }
+
+  fetchDriverLocationStatus() async {
+    if (routeData == null) return;
+
+    trackingData = await ParentDatabaseServices().getDriverLocation(
+      routeData!['driverId'],
+    );
+
+    print("Fetched Tracking Data: $trackingData"); // Debugging
+
+    if (trackingData != null) {
+      if (trackingData?['status'] == "Active") {
+        isDriverActive = true;
+
+        setState(() {
+          currentLocation = LatLng(
+            trackingData?['latitude'] ?? 0.0, // Ensure it's not null
+            trackingData?['longitude'] ?? 0.0,
+          );
+        });
+
+        print("Updated Location: $currentLocation"); // Debugging
+      } else {
+        setState(() {
+          isDriverActive = false;
+        });
+      }
+    }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAndLoadData();
+    Timer.periodic(Duration(seconds: 30), (timer) {
+      fetchDriverLocationStatus();
+
+    });
+  }
+
+  Future<void> fetchAndLoadData() async {
+    await fetchStudents();
+    await loadAssociatedRoute();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +118,10 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                         Text(
                           'SmartBus',
                           style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                         CircleAvatar(
                           radius: 30,
@@ -41,23 +130,30 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                       ],
                     ),
                     SizedBox(height: 10),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        'ALERT! : Bus arrives in 5 minutes',
-                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                    Text(
+                      studentData != null ? 'Hi, ${studentData!['name']}' : '',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
+
                     SizedBox(height: 10),
                     Row(
                       children: [
                         Icon(Icons.calendar_today, color: Colors.black),
                         SizedBox(width: 5),
                         Text(dayMonth, style: TextStyle(color: Colors.black)),
+                        SizedBox(width: 5),
+                        Icon(Icons.person, color: Colors.black),
+                        SizedBox(width: 5),
+                        Text(
+                          driverName != null
+                              ? 'Driver: ${driverName}'
+                              : 'Loading',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ],
                     ),
                     SizedBox(height: 10),
@@ -66,42 +162,60 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                       children: [
                         ElevatedButton(
                           onPressed: () {},
-                          child: Text('Sidhavana'),
+                          child: Text(
+                            routeData?['start_loc_name']?.toString().split(
+                                  ',',
+                                )[0] ??
+                                'Start',
+                          ),
                         ),
                         Icon(Icons.swap_horiz),
                         ElevatedButton(
                           onPressed: () {},
-                          child: Text('Karkala'),
+                          child: Text(
+                            routeData?['end_loc_name']?.toString().split(
+                                  ',',
+                                )[0] ??
+                                'End',
+                          ),
                         ),
                       ],
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Estimated Arrival Time: 14:20',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      busData != null
+                          ? 'Bus Number: ${busData?['bus_number']} '
+                          : 'Bus Number: Loading',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
               ),
               Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isExpanded = !_isExpanded;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    width: double.infinity,
-                    height: _isExpanded ? MediaQuery.of(context).size.height : 200,
-                    color: Colors.white54,
-                    child: Center(
-                      child: Icon(
-                        Icons.map,
-                        size: 50,
-                        color: Colors.black54,
-                      ),
-                    ),
+                child: SizedBox(
+                  height:
+                      MediaQuery.of(context).size.height * 0.4, // Adjust height
+                  child: Center(
+                    child:
+                        isDriverActive == false
+                            ? CircularProgressIndicator() // Show loading until location is fetched
+                            : GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: currentLocation,
+                                zoom: 13,
+                              ),
+
+                              markers: {
+                                Marker(
+                                  markerId: const MarkerId("currentLocation"),
+                                  position: currentLocation,
+                                    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue)
+                                ),
+                              },
+                            ),
                   ),
                 ),
               ),
@@ -117,35 +231,20 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade400),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade400,
+                      ),
                       onPressed: () {},
-                      child: Text('Call Driver', style: TextStyle(color: Colors.black)),
+                      child: Text(
+                        'Call Driver',
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          if (_isExpanded)
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _isExpanded = false;
-                  });
-                },
-                child: Container(
-                  color: Colors.black.withOpacity(0.8),
-                  child: Center(
-                    child: Icon(
-                      Icons.map,
-                      size: 100,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
