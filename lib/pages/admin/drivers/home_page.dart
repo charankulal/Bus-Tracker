@@ -1,6 +1,7 @@
 import 'package:bus_tracking_app/pages/admin/drivers/add_driver_page.dart';
 import 'package:bus_tracking_app/services/admin/driver.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AdminDriversHomePage extends StatefulWidget {
   @override
@@ -25,6 +26,16 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
   void initState() {
     super.initState();
     _loadDrivers();
+  }
+
+  Future<void> makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $launchUri';
+    }
   }
 
   void _deleteDriver(BuildContext context, String id) async {
@@ -116,10 +127,6 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                 style: TextStyle(fontSize: 16),
                               ),
 
-                              Text(
-                                "🚌 Bus No: ",
-                                style: TextStyle(fontSize: 16),
-                              ),
                               FutureBuilder(
                                 future: DriverDatabaseServices()
                                     .getBusNumberByDriverId(driver["driverId"]),
@@ -239,7 +246,20 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.greenAccent,
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      if (driver["phone"] != null && driver["phone"]!.isNotEmpty) {
+                                        makePhoneCall(driver["phone"]!);
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              "Driver Phone number is not available!",
+                                            ),
+                                            duration: Duration(seconds: 1),
+                                          ),
+                                        );
+                                      }
+                                    },
                                     child: Text(
                                       "Call",
                                       style: TextStyle(color: Colors.white),
