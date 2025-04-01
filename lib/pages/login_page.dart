@@ -3,6 +3,7 @@ import 'package:bus_tracking_app/pages/drivers/home_page.dart';
 import 'package:bus_tracking_app/pages/parents/home_page.dart';
 import 'package:bus_tracking_app/services/login/admin_login.dart';
 import 'package:bus_tracking_app/services/login/driver_login.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/utilities.dart';
@@ -17,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   String _selectedRole = 'Parent';
   bool _isKeyboardOpen = false;
   TextEditingController _parentPhoneController = TextEditingController();
+  TextEditingController _parentPasswordController = TextEditingController();
+  TextEditingController _driverPasswordController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _driverPhoneController = TextEditingController();
 
@@ -30,6 +33,11 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  Future<bool> checkInternetConnection() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
   }
 
   @override
@@ -55,33 +63,39 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: 50),
-            if(!_isKeyboardOpen) ...[
-            CircleAvatar(
-              radius: 100,
-              foregroundImage: AssetImage('assets/logo.jpg'),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'SmartBus',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            Text(
-              'Bus Tracking Application',
-              style: TextStyle(fontSize: 14, color: Colors.black),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.calendar_today, color: Colors.black),
-                SizedBox(width: 5),
-                Text(dayMonth, style: TextStyle(color: Colors.black)),
-            ]
-
-            ),
-            SizedBox(height: 40),
+            if (!_isKeyboardOpen) ...[
+              CircleAvatar(
+                radius: 100,
+                foregroundImage: AssetImage('assets/logo.jpg'),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'SmartBus',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              Text(
+                'Bus Tracking Application',
+                style: TextStyle(fontSize: 14, color: Colors.black),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.calendar_today, color: Colors.black),
+                  SizedBox(width: 5),
+                  Text(dayMonth, style: TextStyle(color: Colors.black)),
+                ],
+              ),
+              SizedBox(height: 40),
             ],
-            Text('Login As', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'Login As',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 10),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -89,28 +103,26 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: _isKeyboardOpen ?
-              Text(_selectedRole,
-              style: TextStyle(
-                fontSize: 14
-              ),
-              ):
-              DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _selectedRole,
-                  items: ['Parent', 'Driver', 'Admin'].map((role) {
-                    return DropdownMenuItem<String>(
-                      value: role,
-                      child: Text(role),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedRole = value!;
-                    });
-                  },
-                ),
-              ),
+              child:
+                  _isKeyboardOpen
+                      ? Text(_selectedRole, style: TextStyle(fontSize: 14))
+                      : DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedRole,
+                          items:
+                              ['Parent', 'Driver', 'Admin'].map((role) {
+                                return DropdownMenuItem<String>(
+                                  value: role,
+                                  child: Text(role),
+                                );
+                              }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedRole = value!;
+                            });
+                          },
+                        ),
+                      ),
             ),
             if (_selectedRole == 'Parent') ...[
               SizedBox(height: 20),
@@ -128,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
-                  controller: _passwordController,
+                  controller: _parentPasswordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -154,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
-                  controller: _passwordController,
+                  controller: _driverPasswordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -181,13 +193,24 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
             ],
             SizedBox(height: 20),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
               onPressed: () async {
+                bool isConnected = await checkInternetConnection();
 
-                if(_selectedRole=='Parent'){
-                  if (_passwordController.text.isEmpty ||
+                if (!isConnected) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "No internet connection. Please check your network.",
+                      ),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+
+                if (_selectedRole == 'Parent') {
+                  if (_parentPasswordController.text.isEmpty ||
                       _parentPhoneController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -197,7 +220,8 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                     );
                     return;
                   }
-                  String enteredPassword = _passwordController.text.trim();
+                  String enteredPassword =
+                      _parentPasswordController.text.trim();
                   String enteredPhone = _parentPhoneController.text.trim();
                   final studentId = await StudentLoginDatabaseServices()
                       .authenticateParent(enteredPhone, enteredPassword);
@@ -209,17 +233,18 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                       ),
                     );
                     return;
-                  }
-                  else {
+                  } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ParentHomeScreen(studentId: studentId)),
+                        builder:
+                            (context) => ParentHomeScreen(studentId: studentId),
+                      ),
                     );
                   }
                 }
-                if(_selectedRole=='Driver') {
-                  if (_passwordController.text.isEmpty ||
+                if (_selectedRole == 'Driver') {
+                  if (_driverPasswordController.text.isEmpty ||
                       _driverPhoneController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -229,7 +254,8 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                     );
                     return;
                   }
-                  String enteredPassword = _passwordController.text.trim();
+                  String enteredPassword =
+                      _driverPasswordController.text.trim();
                   String enteredPhone = _driverPhoneController.text.trim();
                   final driverId = await DriverLoginDatabaseServices()
                       .authenticateDriver(enteredPhone, enteredPassword);
@@ -241,12 +267,13 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                       ),
                     );
                     return;
-                  }
-                  else {
+                  } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => DriverHomeScreen(driverId: driverId)),
+                        builder:
+                            (context) => DriverHomeScreen(driverId: driverId),
+                      ),
                     );
                   }
                 }
@@ -261,45 +288,51 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
                     return;
                   }
 
-                    String enteredPassword = _passwordController.text.trim();
-                    List<String> adminPasswords = await AdminLoginServices().getAllAdminPasswords();
+                  String enteredPassword = _passwordController.text.trim();
+                  List<String> adminPasswords =
+                      await AdminLoginServices().getAllAdminPasswords();
 
-                    if (adminPasswords.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Error retrieving admin credentials!"),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                      return;
-                    }
-
-                    if (adminPasswords.contains(enteredPassword)) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Login Successful"),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => AdminHomeScreen()),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Incorrect Password!"),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    }
+                  if (adminPasswords.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Error retrieving admin credentials!"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
                   }
 
+                  if (adminPasswords.contains(enteredPassword)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Login Successful"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdminHomeScreen(),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Incorrect Password!"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                }
               },
               child: Text(
                 "Submit",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black),
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ),
           ],
