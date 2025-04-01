@@ -55,8 +55,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       busData = await DriverHomePageDatabaseServices().getBusByBusId(
         routeData!['busId'],
       );
-      sourceLocation = LatLng(routeData?["start_location"]?["latitude"] ?? 0.0, routeData?["start_location"]?["longitude"] ?? 0.0);
-      endLocation = LatLng(routeData?["end_location"]?["latitude"] ?? 0.0, routeData?["end_location"]?["longitude"] ?? 0.0);
+      sourceLocation = LatLng(
+        routeData?["start_location"]?["latitude"] ?? 0.0,
+        routeData?["start_location"]?["longitude"] ?? 0.0,
+      );
+      endLocation = LatLng(
+        routeData?["end_location"]?["latitude"] ?? 0.0,
+        routeData?["end_location"]?["longitude"] ?? 0.0,
+      );
     }
     setState(() {});
   }
@@ -84,17 +90,29 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   _startTrip() async {
     isTracking = true;
 
-    LocationServices().sendLocation(widget.driverId, currentLocation!, "Active");
+    LocationServices().sendLocation(
+      widget.driverId,
+      currentLocation!,
+      "Active",
+    );
     _timer = Timer.periodic(Duration(seconds: 30), (Timer t) {
       if (currentLocation != null) {
-        LocationServices().sendLocation(widget.driverId, currentLocation!, "Active");
+        LocationServices().sendLocation(
+          widget.driverId,
+          currentLocation!,
+          "Active",
+        );
       }
     });
-    setState(() { });
-}
+    setState(() {});
+  }
 
   _endTrip() {
-    LocationServices().sendLocation(widget.driverId, currentLocation!, "Inactive");
+    LocationServices().sendLocation(
+      widget.driverId,
+      currentLocation!,
+      "Inactive",
+    );
     isTracking = false;
     _timer?.cancel();
     setState(() {});
@@ -103,21 +121,23 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   void getCurrentLocation() {
     Location location = Location();
 
-    location.requestPermission().then((permissionStatus) {
-      if (permissionStatus == PermissionStatus.granted) {
-        location.onLocationChanged.listen((newLocation) {
-          setState(() {
-            currentLocation = newLocation;
-          });
+    location
+        .requestPermission()
+        .then((permissionStatus) {
+          if (permissionStatus == PermissionStatus.granted) {
+            location.onLocationChanged.listen((newLocation) {
+              setState(() {
+                currentLocation = newLocation;
+              });
+            });
+          } else {
+            print("Location permission denied.");
+          }
+        })
+        .catchError((error) {
+          print("Error requesting location permission: $error");
         });
-      } else {
-        print("Location permission denied.");
-      }
-    }).catchError((error) {
-      print("Error requesting location permission: $error");
-    });
   }
-
 
   @override
   void dispose() {
@@ -130,78 +150,90 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.yellow.shade400,
-      body:
-          Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'SmartBus',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            CircleAvatar(
-                              radius: 30,
-                              foregroundImage: AssetImage('assets/logo.jpg'),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Bus number : ${busData?['bus_number'] ?? 'N/A'}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: Text(
-                                routeData?['start_loc_name']?.toString().split(
-                                      ',',
-                                    )[0] ??
-                                    'Start',
-                              ),
-                            ),
-                            Icon(Icons.swap_horiz),
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: Text(
-                                routeData?['end_loc_name']?.toString().split(
-                                      ',',
-                                    )[0] ??
-                                    'End',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'SmartBus',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
+                    CircleAvatar(
+                      radius: 30,
+                      foregroundImage: AssetImage('assets/logo.jpg'),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'Bus number : ${busData?['bus_number'] ?? 'N/A'}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                  Expanded(
-                    child: SizedBox(
-                      height:
-                          MediaQuery.of(context).size.height *
-                          0.7, // Adjust height
-                      child: currentLocation == null
-                          ? Center(child: CircularProgressIndicator())  // Show loading until location is fetched
-                          :GoogleMap(
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        routeData?['start_loc_name']?.toString().split(
+                              ',',
+                            )[0] ??
+                            'Start',
+                      ),
+                    ),
+                    Icon(Icons.swap_horiz),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: SizedBox(
+                        width: 120, // Adjust width as needed
+                        child: Text(
+                          routeData?['end_loc_name']?.toString().split(
+                                ',',
+                              )[0] ??
+                              'End',
+                          textAlign: TextAlign.center,
+                          maxLines: 2, // Allows up to two lines
+                          overflow:
+                              TextOverflow
+                                  .ellipsis, // Adds "..." if the text is too long
+                          softWrap: true, // Ensures text wraps
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6, // Adjust height
+              child:
+                  currentLocation == null
+                      ? Center(
+                        child: CircularProgressIndicator(),
+                      ) // Show loading until location is fetched
+                      : GoogleMap(
                         initialCameraPosition: CameraPosition(
-                          target:  LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-                          zoom: 10,
+                          target: LatLng(
+                            currentLocation!.latitude!,
+                            currentLocation!.longitude!,
+                          ),
+                          zoom: 13,
                         ),
                         polylines: {
                           Polyline(
@@ -217,7 +249,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
                           Marker(
                             markerId: const MarkerId("currentLocation"),
-                            position: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
+                            position: LatLng(
+                              currentLocation!.latitude!,
+                              currentLocation!.longitude!,
+                            ),
                           ),
                           Marker(
                             markerId: MarkerId("destination"),
@@ -225,32 +260,38 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                           ),
                         },
                       ),
-                    ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: isTracking ? null : _startTrip,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ElevatedButton(
-                          onPressed: isTracking ? null : _startTrip,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                          ),
-                          child: Text('Start Trip'),
-                        ),
-                        ElevatedButton(
-                          onPressed: isTracking ? _endTrip : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          child: Text('End Trip'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                  child: Text('Start Trip'),
+                ),
+                ElevatedButton(
+                  onPressed: isTracking ? _endTrip : null,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  child: Text('End Trip'),
+                ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: Text('Log out'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
