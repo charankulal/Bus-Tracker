@@ -41,11 +41,18 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
     );
     setState(() {});
   }
-
   loadAssociatedRoute() async {
+    if (studentData?['route'] == null) {
+      setState(() {
+        routeData = null;
+      });
+      return;
+    }
+
     routeData = await ParentDatabaseServices().getRouteById(
-      studentData?['route'],
+      studentData!['route'],
     );
+
     if (routeData != null) {
       busData = await DriverHomePageDatabaseServices().getBusByBusId(
         routeData!['busId'],
@@ -175,13 +182,23 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                           ),
                         ),
                         Icon(Icons.swap_horiz),
+
                         ElevatedButton(
                           onPressed: () {},
-                          child: Text(
-                            routeData?['end_loc_name']?.toString().split(
-                                  ',',
-                                )[0] ??
-                                'End',
+                          child: SizedBox(
+                            width: 120, // Adjust width as needed
+                            child: Text(
+                              routeData?['end_loc_name']?.toString().split(
+                                ',',
+                              )[0] ??
+                                  'End',
+                              textAlign: TextAlign.center,
+                              maxLines: 2, // Allows up to two lines
+                              overflow:
+                              TextOverflow
+                                  .ellipsis, // Adds "..." if the text is too long
+                              softWrap: true, // Ensures text wraps
+                            ),
                           ),
                         ),
                       ],
@@ -201,31 +218,45 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
               ),
               Expanded(
                 child: SizedBox(
-                  height:
-                      MediaQuery.of(context).size.height * 0.4, // Adjust height
+                  height: MediaQuery.of(context).size.height * 0.4,
                   child: Center(
-                    child:
-                        isDriverActive == false
-                            ? CircularProgressIndicator() // Show loading until location is fetched
-                            : GoogleMap(
-                              initialCameraPosition: CameraPosition(
-                                target: currentLocation,
-                                zoom: 13,
-                              ),
-
-                              markers: {
-                                Marker(
-                                  markerId: const MarkerId("currentLocation"),
-                                  position: currentLocation,
-                                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                                    BitmapDescriptor.hueBlue,
-                                  ),
-                                ),
-                              },
-                            ),
+                    child: routeData == null
+                        ? SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "No route allocated",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                        : isDriverActive == false
+                        ? SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "Driver has not yet started the trip",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                        : GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: currentLocation,
+                        zoom: 13,
+                      ),
+                      markers: {
+                        Marker(
+                          markerId: const MarkerId("currentLocation"),
+                          position: currentLocation,
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueBlue,
+                          ),
+                        ),
+                      },
+                    ),
                   ),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
