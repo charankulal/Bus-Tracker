@@ -116,6 +116,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               style: TextStyle(fontSize: 18, color: Colors.white),
             ),
           ),
+          SizedBox(
+            height: 10,
+          )
         ],
       ),
     );
