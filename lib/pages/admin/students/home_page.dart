@@ -98,7 +98,7 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
                 if (students.isEmpty) {
                   return Center(
                     child: Text(
-                      "No drivers available",
+                      "No students available",
                       style: TextStyle(fontSize: 16),
                     ),
                   );
