@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bus_tracking_app/constants/secrets.dart';
 import 'package:bus_tracking_app/services/drivers/location.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -199,18 +198,16 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     ElevatedButton(
                       onPressed: () {},
                       child: SizedBox(
-                        width: 120, // Adjust width as needed
+                        width: 120,
                         child: Text(
                           routeData?['end_loc_name']?.toString().split(
                                 ',',
                               )[0] ??
                               'End',
                           textAlign: TextAlign.center,
-                          maxLines: 2, // Allows up to two lines
-                          overflow:
-                              TextOverflow
-                                  .ellipsis, // Adds "..." if the text is too long
-                          softWrap: true, // Ensures text wraps
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
                         ),
                       ),
                     ),
@@ -221,12 +218,10 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
           ),
           Expanded(
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6, // Adjust height
+              height: MediaQuery.of(context).size.height * 0.6,
               child:
                   currentLocation == null
-                      ? Center(
-                        child: CircularProgressIndicator(),
-                      ) // Show loading until location is fetched
+                      ? Center(child: CircularProgressIndicator())
                       : GoogleMap(
                         initialCameraPosition: CameraPosition(
                           target: LatLng(

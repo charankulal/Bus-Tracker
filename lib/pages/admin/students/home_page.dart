@@ -29,21 +29,21 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
     await StudentsDatabaseServices()
         .deleteStudent(id)
         .then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Student is Deleted"),
-          duration: Durations.short4,
-        ),
-      );
-    })
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Student is Deleted"),
+              duration: Durations.short4,
+            ),
+          );
+        })
         .catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Failed to delete student: ${error.toString()}"),
-          duration: Duration(seconds: 1),
-        ),
-      );
-    });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Failed to delete student: ${error.toString()}"),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        });
   }
 
   @override
@@ -51,7 +51,6 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
     return Scaffold(
       body: Column(
         children: [
-          // Header Section
           Container(
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
@@ -85,7 +84,6 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
           ),
           SizedBox(height: 10),
 
-          // List of Students
           Expanded(
             child: StreamBuilder(
               stream: studentStream,
@@ -131,41 +129,54 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
                             Text("Parent's Phone: ${student["phone"]}"),
                             Text("Password: ${student["password"]}"),
                             FutureBuilder(
-                              future: RoutesDatabaseService().getRouteById(student["route"]), // Call the function
-                              builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
+                              future: RoutesDatabaseService().getRouteById(
+                                student["route"],
+                              ),
+                              builder: (
+                                context,
+                                AsyncSnapshot<Map<String, dynamic>?> snapshot,
+                              ) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
                                   return Text("Loading route details...");
-                                } else if (snapshot.hasError || snapshot.data == null) {
-                                  return Text("Route details not found", style: TextStyle(color: Colors.red));
+                                } else if (snapshot.hasError ||
+                                    snapshot.data == null) {
+                                  return Text(
+                                    "Route details not found",
+                                    style: TextStyle(color: Colors.red),
+                                  );
                                 } else {
-                                  // Extract route name and driverId
-                                  String routeName = snapshot.data!['route_name'] ?? 'N/A';
-                                  String driverId = snapshot.data!['driverId'] ?? 'N/A';
+                                  String routeName =
+                                      snapshot.data!['route_name'] ?? 'N/A';
+                                  String driverId =
+                                      snapshot.data!['driverId'] ?? 'N/A';
 
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text("Route Name: $routeName", style: TextStyle(fontWeight: FontWeight.bold)),
+                                      Text(
+                                        "Route Name: $routeName",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                       FutureBuilder(
                                         future: DriverDatabaseServices()
                                             .getDriverNameById(driverId),
                                         builder: (
-                                            context,
-                                            AsyncSnapshot<String> snapshot,
-                                            ) {
+                                          context,
+                                          AsyncSnapshot<String> snapshot,
+                                        ) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return Text(
-                                              "Driver: Loading...",
-                                            ); // Placeholder while fetching
+                                            return Text("Driver: Loading...");
                                           } else if (snapshot.hasError) {
-                                            return Text(
-                                              "Driver: Error",
-                                            ); // Error handling
+                                            return Text("Driver: Error");
                                           } else {
                                             return Text(
                                               "Driver: ${snapshot.data}",
-                                            ); // Display Bus Number
+                                            );
                                           }
                                         },
                                       ),
@@ -173,22 +184,20 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
                                         future: DriverDatabaseServices()
                                             .getDriverPhoneById(driverId),
                                         builder: (
-                                            context,
-                                            AsyncSnapshot<String> snapshot,
-                                            ) {
+                                          context,
+                                          AsyncSnapshot<String> snapshot,
+                                        ) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
                                             return Text(
                                               "Driver Phone: Loading...",
-                                            ); // Placeholder while fetching
+                                            );
                                           } else if (snapshot.hasError) {
-                                            return Text(
-                                              "Driver Phone: Error",
-                                            ); // Error handling
+                                            return Text("Driver Phone: Error");
                                           } else {
                                             return Text(
                                               "Driver Phone: ${snapshot.data}",
-                                            ); // Display Bus Number
+                                            );
                                           }
                                         },
                                       ),
@@ -198,10 +207,8 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
                               },
                             ),
 
-
                             SizedBox(height: 8),
                             Divider(color: Colors.grey.shade300),
-                            // Edit & Delete Buttons at the Bottom
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -219,7 +226,12 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => EditStudentPage(studentId: student['studentId'])),
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => EditStudentPage(
+                                              studentId: student['studentId'],
+                                            ),
+                                      ),
                                     );
                                   },
                                   icon: Icon(Icons.edit, color: Colors.white),
@@ -263,7 +275,6 @@ class _AdminStudentsHomePageState extends State<AdminStudentsHomePage> {
             ),
           ),
 
-          // Add New Student Button
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton.icon(

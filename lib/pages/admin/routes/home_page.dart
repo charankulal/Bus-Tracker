@@ -22,7 +22,7 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
 
   _loadRoutes() async {
     routeStream = await RoutesDatabaseService().getAllRoutes();
-    setState(() {}); // Triggers UI update
+    setState(() {});
   }
 
   @override
@@ -31,25 +31,25 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
     _loadRoutes();
   }
 
-  void _deleteRoute(BuildContext context, String id) async{
+  void _deleteRoute(BuildContext context, String id) async {
     await RoutesDatabaseService()
         .deleteRoute(id)
         .then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Route is deleted"),
-          duration: Durations.short4,
-        ),
-      );
-    })
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Route is deleted"),
+              duration: Durations.short4,
+            ),
+          );
+        })
         .catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Failed to delete route: ${error.toString()}"),
-          duration: Duration(seconds: 1),
-        ),
-      );
-    });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Failed to delete route: ${error.toString()}"),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        });
   }
 
   void _addRoute() {
@@ -124,17 +124,11 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
                                 ) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Text(
-                                      "Bus No: Loading...",
-                                    ); // Placeholder while fetching
+                                    return Text("Bus No: Loading...");
                                   } else if (snapshot.hasError) {
-                                    return Text(
-                                      "Bus No: Error",
-                                    ); // Error handling
+                                    return Text("Bus No: Error");
                                   } else {
-                                    return Text(
-                                      "Bus No: ${snapshot.data}",
-                                    ); // Display Bus Number
+                                    return Text("Bus No: ${snapshot.data}");
                                   }
                                 },
                               ),
@@ -147,17 +141,11 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
                                 ) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Text(
-                                      "Driver: Loading...",
-                                    ); // Placeholder while fetching
+                                    return Text("Driver: Loading...");
                                   } else if (snapshot.hasError) {
-                                    return Text(
-                                      "Driver: Error",
-                                    ); // Error handling
+                                    return Text("Driver: Error");
                                   } else {
-                                    return Text(
-                                      "Driver: ${snapshot.data}",
-                                    ); // Display Bus Number
+                                    return Text("Driver: ${snapshot.data}");
                                   }
                                 },
                               ),
@@ -170,17 +158,13 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
                                 ) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return Text(
-                                      "Driver Phone: Loading...",
-                                    ); // Placeholder while fetching
+                                    return Text("Driver Phone: Loading...");
                                   } else if (snapshot.hasError) {
-                                    return Text(
-                                      "Driver Phone: Error",
-                                    ); // Error handling
+                                    return Text("Driver Phone: Error");
                                   } else {
                                     return Text(
                                       "Driver Phone: ${snapshot.data}",
-                                    ); // Display Bus Number
+                                    );
                                   }
                                 },
                               ),
@@ -193,7 +177,8 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.blue,
                                     ),
-                                    onPressed: () => _editRoute(route['routeId']),
+                                    onPressed:
+                                        () => _editRoute(route['routeId']),
                                     icon: Icon(Icons.edit, color: Colors.white),
                                     label: Text(
                                       "Edit",
@@ -204,7 +189,11 @@ class _AdminRoutesHomePageState extends State<AdminRoutesHomePage> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
                                     ),
-                                    onPressed: () => _deleteRoute(context, route['routeId']),
+                                    onPressed:
+                                        () => _deleteRoute(
+                                          context,
+                                          route['routeId'],
+                                        ),
                                     icon: Icon(
                                       Icons.delete,
                                       color: Colors.white,

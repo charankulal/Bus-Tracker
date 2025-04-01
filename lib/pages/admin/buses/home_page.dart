@@ -13,7 +13,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
 
   _loadBuses() async {
     busStream = await BusDatabaseMethods().getAllBuses();
-    setState(() {}); // Triggers UI update
+    setState(() {});
   }
 
   @override
@@ -116,7 +116,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    ); // Show loading text
+                                    );
                                   } else if (snapshot.hasError) {
                                     return Text(
                                       "Route: Error",
@@ -125,7 +125,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.red,
                                       ),
-                                    ); // Show error text
+                                    );
                                   } else if (!snapshot.hasData ||
                                       snapshot.data == null) {
                                     return Text(
@@ -135,7 +135,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey,
                                       ),
-                                    ); // Show when no route is assigned
+                                    );
                                   } else {
                                     return Text(
                                       "Route: ${snapshot.data}",
@@ -144,7 +144,7 @@ class _AdminBusHomePageState extends State<AdminBusHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
                                       ),
-                                    ); // Display fetched route name
+                                    );
                                   }
                                 },
                               ),

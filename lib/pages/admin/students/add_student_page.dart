@@ -11,7 +11,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _selectedRoute;
-  List<Map<String, dynamic>> _routesList =[];
+  List<Map<String, dynamic>> _routesList = [];
 
   @override
   void initState() {
@@ -72,30 +72,30 @@ class _AddStudentPageState extends State<AddStudentPage> {
     Map<String, dynamic> studentInfo = {
       "name": _nameController.text,
       "phone": _phoneController.text,
-      "password":_passwordController.text,
-      "route":_selectedRoute
+      "password": _passwordController.text,
+      "route": _selectedRoute,
     };
     await StudentsDatabaseServices()
         .addStudent(studentInfo)
         .then((value) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Student Details Added Successfully"),
-          duration: Duration(seconds: 1),
-        ),
-      );
-    })
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Student Details Added Successfully"),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        })
         .catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Failed to add student details: ${error.toString()}",
-          ),
-          duration: Duration(seconds: 1),
-        ),
-      );
-    });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Failed to add student details: ${error.toString()}",
+              ),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        });
   }
 
   @override
@@ -111,50 +111,68 @@ class _AddStudentPageState extends State<AddStudentPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Student Name
-              Text("Student Name", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(
+                "Student Name",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               SizedBox(height: 6),
               TextField(
                 controller: _nameController,
                 decoration: InputDecoration(
                   hintText: "Enter student's name",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
               SizedBox(height: 16),
 
-              // Phone Number
-              Text("Parent's Phone Number", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(
+                "Parent's Phone Number",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               SizedBox(height: 6),
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   hintText: "Enter phone number",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
 
-              Text("Password", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(
+                "Password",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               SizedBox(height: 6),
               TextField(
                 controller: _passwordController,
                 decoration: InputDecoration(
                   hintText: "Enter password",
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
               SizedBox(height: 16),
 
-              // Route Selection (Dropdown)
-              Text("Select Route", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(
+                "Select Route",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               SizedBox(height: 6),
               DropdownButtonFormField<String>(
-                value: _selectedRoute??"qwerty",
+                value: _selectedRoute ?? "qwerty",
                 items: [
                   DropdownMenuItem<String>(
                     value: 'qwerty',
-                    child: Text("Select Route", style: TextStyle(color: Colors.black)),
+                    child: Text(
+                      "Select Route",
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                   ..._routesList.map((route) {
                     return DropdownMenuItem<String>(
@@ -168,38 +186,53 @@ class _AddStudentPageState extends State<AddStudentPage> {
               ),
               SizedBox(height: 24),
 
-              // Save & Cancel Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 32,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     onPressed: () {
                       _addStudent();
                     },
-                    child: Text("Save", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 32,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
                 ],
               ),
             ],
           ),
         ),
-      )
+      ),
     );
   }
 }

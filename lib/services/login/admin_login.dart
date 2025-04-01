@@ -8,7 +8,7 @@ class AdminLoginServices {
     try {
       QuerySnapshot querySnapshot = await adminPasswordCollection.get();
       List<String> passwords = querySnapshot.docs
-          .map((doc) => doc.get('password').toString()) // Ensure 'password' exists
+          .map((doc) => doc.get('password').toString())
           .toList();
       return passwords;
     } catch (e) {

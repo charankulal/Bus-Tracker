@@ -41,6 +41,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
     );
     setState(() {});
   }
+
   loadAssociatedRoute() async {
     if (studentData?['route'] == null) {
       setState(() {
@@ -85,7 +86,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
 
         setState(() {
           currentLocation = LatLng(
-            trackingData?['latitude'] ?? 0.0, // Ensure it's not null
+            trackingData?['latitude'] ?? 0.0,
             trackingData?['longitude'] ?? 0.0,
           );
         });
@@ -186,18 +187,16 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                         ElevatedButton(
                           onPressed: () {},
                           child: SizedBox(
-                            width: 120, // Adjust width as needed
+                            width: 120,
                             child: Text(
                               routeData?['end_loc_name']?.toString().split(
-                                ',',
-                              )[0] ??
+                                    ',',
+                                  )[0] ??
                                   'End',
                               textAlign: TextAlign.center,
-                              maxLines: 2, // Allows up to two lines
-                              overflow:
-                              TextOverflow
-                                  .ellipsis, // Adds "..." if the text is too long
-                              softWrap: true, // Ensures text wraps
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
                             ),
                           ),
                         ),
@@ -220,39 +219,46 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.4,
                   child: Center(
-                    child: routeData == null
-                        ? SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        "No route allocated",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    )
-                        : isDriverActive == false
-                        ? SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        "Driver has not yet started the trip",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    )
-                        : GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: currentLocation,
-                        zoom: 13,
-                      ),
-                      markers: {
-                        Marker(
-                          markerId: const MarkerId("currentLocation"),
-                          position: currentLocation,
-                          icon: BitmapDescriptor.defaultMarkerWithHue(
-                            BitmapDescriptor.hueBlue,
-                          ),
-                        ),
-                      },
-                    ),
+                    child:
+                        routeData == null
+                            ? SizedBox(
+                              width: double.infinity,
+                              child: Text(
+                                "No route allocated",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                            : isDriverActive == false
+                            ? SizedBox(
+                              width: double.infinity,
+                              child: Text(
+                                "Driver has not yet started the trip",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                            : GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                target: currentLocation,
+                                zoom: 13,
+                              ),
+                              markers: {
+                                Marker(
+                                  markerId: const MarkerId("currentLocation"),
+                                  position: currentLocation,
+                                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                                    BitmapDescriptor.hueBlue,
+                                  ),
+                                ),
+                              },
+                            ),
                   ),
                 ),
               ),

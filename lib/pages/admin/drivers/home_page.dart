@@ -19,7 +19,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
 
   _loadDrivers() async {
     driverStream = await DriverDatabaseServices().getAllDrivers();
-    setState(() {}); // Triggers UI update
+    setState(() {});
   }
 
   @override
@@ -142,7 +142,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    ); // Show loading text
+                                    );
                                   } else if (snapshot.hasError) {
                                     return Text(
                                       "🚌 Bus No: : Error",
@@ -151,7 +151,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.red,
                                       ),
-                                    ); // Show error text
+                                    );
                                   } else if (!snapshot.hasData ||
                                       snapshot.data == null) {
                                     return Text(
@@ -161,7 +161,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey,
                                       ),
-                                    ); // Show when no route is assigned
+                                    );
                                   } else {
                                     return Text(
                                       "🚌 Bus No: : ${snapshot.data}",
@@ -170,7 +170,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
                                       ),
-                                    ); // Display fetched route name
+                                    );
                                   }
                                 },
                               ),
@@ -189,7 +189,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    ); // Show loading text
+                                    );
                                   } else if (snapshot.hasError) {
                                     return Text(
                                       "📍 Route: Error",
@@ -198,7 +198,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.red,
                                       ),
-                                    ); // Show error text
+                                    );
                                   } else if (!snapshot.hasData ||
                                       snapshot.data == null) {
                                     return Text(
@@ -208,7 +208,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey,
                                       ),
-                                    ); // Show when no route is assigned
+                                    );
                                   } else {
                                     return Text(
                                       "📍 Route: ${snapshot.data}",
@@ -217,7 +217,7 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
                                       ),
-                                    ); // Display fetched route name
+                                    );
                                   }
                                 },
                               ),
@@ -247,10 +247,13 @@ class _AdminDriversHomePageState extends State<AdminDriversHomePage> {
                                       backgroundColor: Colors.greenAccent,
                                     ),
                                     onPressed: () {
-                                      if (driver["phone"] != null && driver["phone"]!.isNotEmpty) {
+                                      if (driver["phone"] != null &&
+                                          driver["phone"]!.isNotEmpty) {
                                         makePhoneCall(driver["phone"]!);
                                       } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               "Driver Phone number is not available!",

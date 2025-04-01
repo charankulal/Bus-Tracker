@@ -27,23 +27,19 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     getCount();
   }
 
-  getCount() async{
+  getCount() async {
     totalStudents = await StudentsDatabaseServices().getTotalStudents();
     totalRoutes = await RoutesDatabaseService().getTotalRoutes();
     totalDrivers = await DriverDatabaseServices().getTotalDrivers();
     totalBuses = await BusDatabaseMethods().getTotalBuses();
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Column(
         children: [
-          // Header Section
           Container(
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
@@ -68,7 +64,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         color: Colors.black,
                       ),
                     ),
-
                   ],
                 ),
                 SizedBox(height: 10),
@@ -84,7 +79,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
           SizedBox(height: 20),
 
-          // Admin Options
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
@@ -92,10 +86,34 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               children: [
-                _buildAdminOption(context, 'Students',totalStudents, Icons.school, Colors.blue.shade300),
-                _buildAdminOption(context, 'Routes',totalRoutes, Icons.map, Colors.green.shade300),
-                _buildAdminOption(context, 'Drivers',totalDrivers, Icons.directions_bus, Colors.orange.shade300),
-                _buildAdminOption(context, 'Buses',totalBuses, Icons.directions_transit, Colors.red.shade300),
+                _buildAdminOption(
+                  context,
+                  'Students',
+                  totalStudents,
+                  Icons.school,
+                  Colors.blue.shade300,
+                ),
+                _buildAdminOption(
+                  context,
+                  'Routes',
+                  totalRoutes,
+                  Icons.map,
+                  Colors.green.shade300,
+                ),
+                _buildAdminOption(
+                  context,
+                  'Drivers',
+                  totalDrivers,
+                  Icons.directions_bus,
+                  Colors.orange.shade300,
+                ),
+                _buildAdminOption(
+                  context,
+                  'Buses',
+                  totalBuses,
+                  Icons.directions_transit,
+                  Colors.red.shade300,
+                ),
               ],
             ),
           ),
@@ -105,7 +123,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               backgroundColor: Colors.red,
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 50),
             ),
-            onPressed: (){
+            onPressed: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -116,15 +134,19 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               style: TextStyle(fontSize: 18, color: Colors.white),
             ),
           ),
-          SizedBox(
-            height: 10,
-          )
+          SizedBox(height: 10),
         ],
       ),
     );
   }
 
-  Widget _buildAdminOption(BuildContext context, String title,int total, IconData icon, Color color) {
+  Widget _buildAdminOption(
+    BuildContext context,
+    String title,
+    int total,
+    IconData icon,
+    Color color,
+  ) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
@@ -132,25 +154,25 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         padding: EdgeInsets.all(20),
       ),
       onPressed: () {
-        if(title=='Students'){
+        if (title == 'Students') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AdminStudentsHomePage()),
           );
         }
-        if(title=='Routes'){
+        if (title == 'Routes') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AdminRoutesHomePage()),
           );
         }
-        if(title=='Drivers'){
+        if (title == 'Drivers') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AdminDriversHomePage()),
           );
         }
-        if(title=='Buses'){
+        if (title == 'Buses') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AdminBusHomePage()),
@@ -164,7 +186,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           SizedBox(height: 10),
           Text(title, style: TextStyle(fontSize: 18, color: Colors.black)),
           SizedBox(height: 10),
-          Text("Total "+title+" "+total.toString(), style: TextStyle(fontSize: 12, color: Colors.black)),
+          Text(
+            "Total " + title + " " + total.toString(),
+            style: TextStyle(fontSize: 12, color: Colors.black),
+          ),
         ],
       ),
     );
